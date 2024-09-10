@@ -260,7 +260,7 @@ docker run -d \
   --restart=always \
   -v /root/alist-bot/config.yaml:/usr/src/app/config.yaml \
   -p 3214:3214 \
-  ghcr.io/AkashiCoin/alist-bot:latest
+  ghcr.io/akashicoin/alist-bot:latest
 ```
 
 ### 二、正常安装
