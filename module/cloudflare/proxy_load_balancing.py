@@ -21,21 +21,22 @@ async_client = httpx.AsyncClient(limits=limits)
 
 
 @fast.get("/{path:path}")
-async def redirect_path(path: str):
+async def redirect_path(path: str, sign: str | None = None):
     if not plb_cfg.enable:
         return PlainTextResponse("代理负载均衡已关闭", status_code=503)
 
     path = encode_url(path, False)
     if not path:
         return Response(content="运行中...", media_type="text/plain; charset=utf-8")
-
+    if path.startswith("down/"):
+        path = path[5:]
     r = await available_nodes()
     if not r:
         return FileResponse(
             path="./module/cloudflare/warning.txt",
             filename="网站的下载节点流量已全部用完 早上8点自动恢复.txt",
         )
-    new_url = f"https://{r}/{path}?sign={alist.sign(f'/{path}')}"
+    new_url = f"https://{r}/{path}?sign={alist.sign(f'/{path}') if not sign else sign}"
     ext = path.split(".")[-1]
     if ext in TEXT_TYPES:
         return await forward_text(new_url)

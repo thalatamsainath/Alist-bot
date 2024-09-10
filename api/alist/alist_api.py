@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import base64
+import datetime
 import hashlib
 import hmac
 import os
@@ -221,9 +222,12 @@ class AListAPI:
         return await self._request("POST", url)
 
     @staticmethod
-    def sign(path) -> str:
+    def sign(path: str, expire_time: int = 30) -> str:
         """计算签名"""
-        expire_time_stamp = "0"
+        expire_time_stamp = int(
+            datetime.datetime.now().timestamp()
+            + datetime.timedelta(minutes=expire_time).total_seconds()
+        )
         to_sign = f"{path}:{expire_time_stamp}"
         signature = hmac.new(
             bot_cfg.alist_token.encode(), to_sign.encode(), hashlib.sha256
