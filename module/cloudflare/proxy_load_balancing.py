@@ -1,6 +1,7 @@
 import asyncio
 import random
 
+import aiocache
 import httpx
 from fastapi import Response
 from loguru import logger
@@ -93,6 +94,9 @@ async def refresh_nodes_regularly():
     #     for result in await asyncio.gather(*tasks, return_exceptions=True)
     #     if not isinstance(result, BaseException) and result[1] < 100000
     # ]
+    cache = aiocache.decorators._get_cache()
+    for node in cf_cfg.nodes:
+        await cache.delete(key=node.url)
     tasks = [check_node_status(node.url) for node in cf_cfg.nodes]
     r = await asyncio.gather(*tasks, return_exceptions=True)
     node_list = []

@@ -2,6 +2,7 @@ import datetime
 from dataclasses import dataclass
 
 import httpx
+from aiocache import cached
 from httpx import AsyncClient
 from loguru import logger
 
@@ -18,6 +19,11 @@ class NodeStatus:
 
 
 # 检查节点状态
+@cached(
+    ttl=300,
+    key_builder=lambda _, *args, **kwargs: kwargs.get("url"),
+    skip_cache_func=lambda ns: ns.status != 200,
+)  # 缓存5分钟
 async def check_node_status(url: str, cli: AsyncClient = None) -> NodeStatus:
     status_code_map = {
         200: [url, 200],
