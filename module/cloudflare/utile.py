@@ -21,7 +21,7 @@ class NodeStatus:
 # 检查节点状态
 @cached(
     ttl=300,
-    key_builder=lambda _, *args, **kwargs: kwargs.get("url"),
+    key_builder=lambda f, *args, **kwargs: args[0],
     skip_cache_func=lambda ns: ns.status != 200,
 )  # 缓存5分钟
 async def check_node_status(url: str, cli: AsyncClient = None) -> NodeStatus:
