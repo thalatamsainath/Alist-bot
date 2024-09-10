@@ -1,3 +1,4 @@
+from loguru import logger
 from pyrogram import Client, filters
 from pyrogram.types import (
     CallbackQuery,
@@ -134,6 +135,7 @@ async def account_edit(_, message: Message):
                 if len(lw.result) > 0 or len(lp.result) > 0:
                     account_workers_pages.append((account_id, lw.result, lp.result))
         except Exception as e:
+            logger.error(f"错误：{type(e)} {str(e)}")
             await chat_data["ad_message"].answer(text=f"错误：{str(e)}")
         else:
             if account_workers_pages:
@@ -174,7 +176,7 @@ async def account_edit(_, message: Message):
                                     page_name=page_name,
                                 )
                             )
-                    await url_select(chat_data["ad_message"])
+                await url_select(chat_data["ad_message"])
             else:
                 text = f"""
 <b>添加失败: </b>
