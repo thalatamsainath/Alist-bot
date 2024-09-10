@@ -25,6 +25,14 @@ class WorkerInfo(CloudflareAPIResponse):
     @classmethod
     def from_dict(cls, result: dict):
         if data := result.get("data"):
+            if not data["viewer"]["accounts"][0]["workersInvocationsAdaptive"]:
+                return cls(
+                    duration=0,
+                    errors=0,
+                    requests=0,
+                    response_body_size=0,
+                    subrequests=0,
+                )
             sum = data["viewer"]["accounts"][0]["workersInvocationsAdaptive"][0]["sum"]
             return cls(
                 duration=sum["requests"],

@@ -4,19 +4,16 @@ from itertools import chain
 
 from apscheduler.triggers.cron import CronTrigger
 from loguru import logger
-from pyrogram import filters, Client
+from pyrogram import Client, filters
 from pyrogram.enums.parse_mode import ParseMode
-from pyrogram.types import (
-    InlineKeyboardMarkup,
-    CallbackQuery,
-)
+from pyrogram.types import CallbackQuery, InlineKeyboardMarkup
 
 from api.alist.alist_api import alist
 from api.alist.base.storage.get import StorageInfo
 from bot import run_fastapi
-from config.config import cf_cfg, chat_data, bot_cfg, plb_cfg
+from config.config import bot_cfg, cf_cfg, chat_data, plb_cfg
 from module.cloudflare.cloudflare import build_node_info, r_cf_menu
-from module.cloudflare.utile import check_node_status, NodeStatus, re_remark
+from module.cloudflare.utile import NodeStatus, check_node_status, re_remark
 from tools.scheduler_manager import aps
 
 _D = {
@@ -132,11 +129,15 @@ async def send_cronjob_status_push(app: Client):
     nodes = [value.url for value in cf_cfg.nodes]
     task = [check_node_status(node) for node in nodes]
     # 全部节点
-    results = list(await asyncio.gather(*task))
+    results: list[NodeStatus] = [
+        reulst
+        for reulst in await asyncio.gather(*task, return_exceptions=True)
+        if not isinstance(reulst, BaseException)
+    ]
     # 可用节点
     available_nodes = await returns_the_available_nodes(results)
 
-    task = [r_(node, status_code) for node, status_code in results]
+    task = [r_(node_status.url, node_status.status) for node_status in results]
     result = [i for i in await asyncio.gather(*task, return_exceptions=True) if i]
 
     tasks = [
@@ -170,7 +171,7 @@ def start_status_push(app):
 
 
 # 检测全部节点状态
-async def r_(node, status_code):
+async def r_(node: str, status_code: int):
     # 第一次获取默认设置为状态正常
     if not chat_data.get(node):
         chat_data[node] = 200

@@ -1,6 +1,11 @@
-from typing import Literal, Dict, Any
+from typing import Any, Dict, Literal
 
-import httpx
+from cloudflare import AsyncCloudflare
+from cloudflare.pagination import AsyncSinglePage, AsyncV4PagePaginationArray
+from cloudflare.types.filters.firewall_filter import FirewallFilter
+from cloudflare.types.pages.deployment import Deployment
+from cloudflare.types.workers.script import Script
+from cloudflare.types.zones.zone import Zone
 
 from api.cloudflare.base import WorkerInfo
 
@@ -9,12 +14,10 @@ class CloudflareAPI:
     def __init__(self, email, key):
         self.email = email
         self.key = key
-        self.api_endpoint = "https://api.cloudflare.com/client/v4/"
-        self.headers = {
-            "X-Auth-Email": self.email,
-            "X-Auth-Key": self.key,
-            "Content-Type": "application/json",
-        }
+        self.client = AsyncCloudflare(api_email=self.email, api_key=self.key)
+
+    async def list_accounts(self) -> AsyncV4PagePaginationArray[object]:
+        return await self.client.accounts.list()
 
     async def _request(
         self,
@@ -27,42 +30,55 @@ class CloudflareAPI:
         data: Any = None,
         timeout: int = 10,
     ) -> dict:
-        url = self.api_endpoint + url.removeprefix("/")
-        headers = self.headers if headers is None else headers
-
-        async with httpx.AsyncClient() as client:
-            if method == "GET":
-                response = await client.get(
-                    url, headers=headers, params=params, timeout=timeout
-                )
-            elif method == "POST":
-                response = await client.post(
-                    url, headers=headers, json=json, timeout=timeout
-                )
-            elif method == "PUT":
-                response = await client.put(
-                    url, headers=headers, data=data, timeout=timeout
-                )
+        headers = self.client.default_headers if headers is None else headers
+        if method == "GET":
+            response = await self.client._client.get(
+                url, headers=headers, params=params, timeout=timeout
+            )
+        elif method == "POST":
+            response = await self.client._client.post(
+                url, headers=headers, json=json, timeout=timeout
+            )
+        elif method == "PUT":
+            response = await self.client._client.put(
+                url, headers=headers, data=data, timeout=timeout
+            )
 
         return response.json()
 
-    async def list_accounts(self) -> dict:
-        url = "/accounts"
-        return await self._request("GET", url)
+    async def list_zones(
+        self,
+    ) -> AsyncV4PagePaginationArray[Zone]:
+        return await self.client.zones.list()
 
-    async def list_zones(self) -> dict:
-        url = "/zones"
-        return await self._request("GET", url)
+    async def get_workers_filter(
+        self, zone_id
+    ) -> AsyncV4PagePaginationArray[FirewallFilter]:
+        return await self.client.filters.list(zone_id)
 
-    async def list_filters(self, zone_id) -> dict:
-        url = f"/zones/{zone_id}/workers/filters"
-        return await self._request("GET", url)
+    async def list_workers(self, account_id) -> AsyncSinglePage[Script]:
+        return await self.client.workers.scripts.list(account_id=account_id)
 
-    async def list_workers(self, account_id) -> dict:
-        url = f"/accounts/{account_id}/workers/scripts"
-        return await self._request("GET", url)
+    async def list_pages(self, account_id) -> AsyncSinglePage[Deployment]:
+        return await self.client.pages.projects.list(account_id=account_id)
 
-    async def graphql_api(self, account_id, start, end, worker_name) -> WorkerInfo:
+    async def graphql_api(
+        self,
+        account_id: str,
+        start: str,
+        end: str,
+        worker_name: str = "",
+        page_name: str = "",
+    ) -> WorkerInfo:
+        if worker_name:
+            return await self.graphql_api_worker(account_id, start, end, worker_name)
+        elif page_name:
+            return await self.graphql_api_page(account_id, start, end, page_name)
+        raise
+
+    async def graphql_api_worker(
+        self, account_id, start, end, worker_name
+    ) -> WorkerInfo:
         """获取worker数据
         :return dict
         {
@@ -96,8 +112,8 @@ query getBillingMetrics($accountTag: string, $datetimeStart: string, $datetimeEn
       accounts(filter: {accountTag: $accountTag}) {
         workersInvocationsAdaptive(limit: 10, filter: {
           scriptName: $scriptName,
-          date_geq: $datetimeStart,
-          date_leq: $datetimeEnd
+          datetime_geq: $datetimeStart,
+          datetime_leq: $datetimeEnd
         }) {
           sum {
           duration
@@ -120,6 +136,67 @@ query getBillingMetrics($accountTag: string, $datetimeStart: string, $datetimeEn
         }
 
         result = await self._request(
-            "POST", url, json={"query": query, "variables": variables}
+            "POST", url=url, json={"query": query, "variables": variables}
+        )
+        return WorkerInfo.from_dict(result)
+
+    async def graphql_api_page(self, account_id, start, end, page_name) -> WorkerInfo:
+        """获取worker数据
+        :return dict
+        {
+          'data': {
+            'viewer': {
+              'accounts': [
+                {
+                  'workersInvocationsAdaptive': [
+                    {
+                      'sum': {
+                        '__typename': 'AccountWorkersInvocationsAdaptiveSum',
+                        'duration': 6195.5075318750005,
+                        'errors': 2113,
+                        'requests': 91946,
+                        'responseBodySize': 277975284672,
+                        'subrequests': 166371
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          'errors': None
+        }
+        """
+        url = "/graphql"
+        query = """
+query getPagesProjectAnalytics_hour($accountTag: string, $scriptName: string, $datetimeStart: string, $datetimeEnd: string) {
+  viewer {
+    accounts(filter: {accountTag: $accountTag}) {
+      workersInvocationsAdaptive: pagesFunctionsInvocationsAdaptiveGroups(limit: 10, filter: {
+          datetime_geq: $datetimeStart,
+          datetime_leq: $datetimeEnd, 
+          scriptName: $scriptName}) {
+        sum {
+          duration
+          requests
+          subrequests
+          responseBodySize
+          errors
+          __typename
+        }
+      }
+    }
+  }
+}
+"""
+        variables = {
+            "accountTag": account_id,
+            "datetimeStart": start,
+            "datetimeEnd": end,
+            "scriptName": page_name,
+        }
+
+        result = await self._request(
+            "POST", url=url, json={"query": query, "variables": variables}
         )
         return WorkerInfo.from_dict(result)

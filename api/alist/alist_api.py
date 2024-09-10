@@ -3,13 +3,20 @@ import base64
 import hashlib
 import hmac
 import os
-from typing import Literal, Type, Dict, Any
+from typing import Any, Dict, Literal, Type
 from urllib import parse
 from urllib.parse import urljoin
 
 import httpx
 
-from api.alist.base import *
+from api.alist.base import (
+    FileInfo,
+    MetaInfo,
+    SearchResultData,
+    SettingInfo,
+    StorageInfo,
+    UserInfo,
+)
 from api.alist.base.base import AListAPIResponse, T
 from config.config import bot_cfg
 

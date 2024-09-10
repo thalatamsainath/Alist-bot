@@ -4,7 +4,7 @@ import random
 import httpx
 from fastapi import Response
 from loguru import logger
-from starlette.responses import RedirectResponse, PlainTextResponse, FileResponse
+from starlette.responses import FileResponse, PlainTextResponse, RedirectResponse
 
 from api.alist.alist_api import alist
 from api.alist.base import SettingInfo
@@ -97,7 +97,7 @@ async def refresh_nodes_regularly():
     node_list = []
     for i in r:
         if isinstance(i, BaseException):
-            logger.error(f'刷新节点错误: {i}')
+            logger.error(f"刷新节点错误: {type(i)} {i}")
             continue
         if i.status == 200:
             node_list.append(i.url)

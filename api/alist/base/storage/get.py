@@ -64,3 +64,7 @@ class StorageInfo(AListAPIData):
             webdav_policy=data.get("webdav_policy"),
             down_proxy_url=data.get("down_proxy_url"),
         )
+
+
+class StorageInfos(AListAPIData):
+    content: list[StorageInfo]

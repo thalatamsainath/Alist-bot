@@ -1,7 +1,7 @@
 import asyncio
 import random
 
-from pyrogram import filters, Client
+from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, Message
 
 from api.alist.alist_api import alist
@@ -36,7 +36,7 @@ async def set_unified_node(_, msg: Message):
     await m.edit("存储统一代理|完成!")
 
 
-async def set_random_node(node: str = None):
+async def set_random_node(node: str | None = None):
     """设置节点代理"""
     storage_list = await alist.storage_list()
     nodes = [f"https://{node.url}" for node in cf_cfg.nodes]
@@ -45,7 +45,6 @@ async def set_random_node(node: str = None):
             storage.down_proxy_url = node or random.choice(nodes)
             storage.remark = re_remark(storage.remark, storage.down_proxy_url)
     task = [alist.storage_update(s) for s in storage_list.data]
-    try:
-        await asyncio.gather(*task)
-    except Exception as e:
-        return e
+    results = await asyncio.gather(*task, return_exceptions=True)
+    fail_results = [result for result in results if isinstance(result, Exception)]
+    return fail_results

@@ -5,22 +5,20 @@ from dataclasses import dataclass
 
 from apscheduler.triggers.cron import CronTrigger
 from loguru import logger
-from pyrogram import filters, Client
-from pyrogram.types import (
-    InlineKeyboardButton as Ikb,
-    InlineKeyboardMarkup as Ikm,
-    CallbackQuery,
-    Message,
-)
+from pyrogram import Client, filters
+from pyrogram.types import CallbackQuery
+from pyrogram.types import InlineKeyboardButton as Ikb
+from pyrogram.types import InlineKeyboardMarkup as Ikm
+from pyrogram.types import Message
 
 from config.config import cf_cfg, chat_data, plb_cfg
 from module.cloudflare.utile import (
+    NodeInfo,
     check_node_status,
     date_shift,
-    NodeInfo,
     get_node_info,
 )
-from tools.filters import is_admin, step_filter, is_member
+from tools.filters import is_admin, is_member, step_filter
 from tools.scheduler_manager import aps
 from tools.step_statu import step
 from tools.utils import pybyte
@@ -152,7 +150,10 @@ async def account_return_callback(_, query: CallbackQuery):
 async def menu_text():
     if nodes := cf_cfg.nodes:
         task = [check_node_status(node.url) for node in nodes]
-        results = [i.status for i in await asyncio.gather(*task)]
+        results = [
+            (i.status if not isinstance(i, BaseException) else 502)
+            for i in await asyncio.gather(*task, return_exceptions=True)
+        ]
 
         return f"""
 节点数量：{len(nodes)}

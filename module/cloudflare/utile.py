@@ -26,24 +26,31 @@ async def check_node_status(url: str, cli: AsyncClient = None) -> NodeStatus:
     try:
         if cli:
             response = await cli.get(f"https://{url}")
-
         else:
             async with httpx.AsyncClient() as client:
                 response = await client.get(f"https://{url}")
+    except httpx.ConnectTimeout:
+        return NodeStatus(url, 502)
     except httpx.ConnectError:
+        return NodeStatus(url, 502)
+    except httpx.ReadTimeout:
+        return NodeStatus(url, 502)
+    except Exception as e:
+        logger.error(f"节点({url})状态检查失败-未知错误| {type(e)} {e}")
         return NodeStatus(url, 502)
     return NodeStatus(*status_code_map.get(response.status_code, [url, 502]))
 
 
 # 将当前日期移位n天，并返回移位日期和移位日期的前一个和下一个日期。
 def date_shift(n: int = 0):
-    today = datetime.date.today()
-    shifted_date = datetime.date.fromordinal(today.toordinal() + n)
-    previous_date = datetime.date.fromordinal(shifted_date.toordinal() - 1)
-    next_date = datetime.date.fromordinal(shifted_date.toordinal() + 1)
-    previous_date_string = previous_date.isoformat()
-    next_date_string = next_date.isoformat()
-    return shifted_date.isoformat(), previous_date_string, next_date_string
+    tz_utc_0 = datetime.timezone.utc
+    today = datetime.datetime.today().astimezone(tz=tz_utc_0)
+    shifted_date = datetime.datetime.fromordinal(today.toordinal() + n)
+    previous_date = datetime.datetime.fromordinal(shifted_date.toordinal() - 1)
+    next_date = datetime.datetime.fromordinal(shifted_date.toordinal() + 1)
+    previous_date_string = f"{previous_date.isoformat()}Z"
+    next_date_string = f"{next_date.isoformat()}Z"
+    return f"{shifted_date.isoformat()}Z", previous_date_string, next_date_string
 
 
 @dataclass
@@ -64,7 +71,7 @@ async def get_node_info(day: int, info: CloudFlareInfo) -> NodeInfo:
     """获取节点信息"""
     d = date_shift(day)
     wi = await CloudflareAPI(info.email, info.global_api_key).graphql_api(
-        info.account_id, d[0], d[0], info.worker_name
+        info.account_id, d[0], d[2], info.worker_name, info.page_name
     )
     code = await check_node_status(info.url)
 
@@ -79,6 +86,9 @@ async def get_node_info(day: int, info: CloudFlareInfo) -> NodeInfo:
 def re_remark(remark: str, node: str):
     if "节点：" in remark:
         return "\n".join(
-            [f"节点：{node}" if "节点：" in line else line for line in remark.split("\n")]
+            [
+                f"节点：{node}" if "节点：" in line else line
+                for line in remark.split("\n")
+            ]
         )
     return f"节点：{node}\n{remark}"

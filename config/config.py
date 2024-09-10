@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any, Optional
 
 import yaml
 
@@ -115,8 +115,8 @@ class CloudFlareInfo:
     email: str
     global_api_key: str
     url: str
-    zone_id: str
     worker_name: str
+    page_name: str
 
 
 class CloudflareConfig(Config):
@@ -138,8 +138,8 @@ class CloudflareConfig(Config):
                 i["email"],
                 i["global_api_key"],
                 i["url"],
-                i["zone_id"],
                 i["worker_name"],
+                i["page_name"],
             )
             for i in info
         ]
