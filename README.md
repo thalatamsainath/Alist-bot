@@ -260,7 +260,7 @@ docker run -d \
   --restart=always \
   -v /root/alist-bot/config.yaml:/usr/src/app/config.yaml \
   -p 3214:3214 \
-  ghcr.io/z-mio/alist-bot:latest
+  ghcr.io/AkashiCoin/alist-bot:latest
 ```
 
 ### 二、正常安装
@@ -274,7 +274,7 @@ apt install python3-pip
 **2.将项目克隆到本地**
 
 ``` 
-git clone https://github.com/z-mio/Alist-bot.git && cd Alist-bot && pip3 install -r requirements.txt
+git clone https://github.com/AkashiCoin/Alist-bot.git && cd Alist-bot && pip3 install -r requirements.txt
 ```
 
 **3.修改 config.yaml 里的配置信息**
