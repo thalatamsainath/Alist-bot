@@ -3,6 +3,7 @@
 import asyncio
 from dataclasses import dataclass
 
+from aiocache import cached
 from apscheduler.triggers.cron import CronTrigger
 from loguru import logger
 from pyrogram import Client, filters
@@ -186,7 +187,8 @@ async def send_node_status(cq: CallbackQuery, day):
     button = [bandwidth_button_a, bandwidth_button_b, bandwidth_button_c, return_button]
     await cq.message.edit(text="检测节点中...", reply_markup=Ikm(button))
     cd = f"gns_expansion_{day}"
-    ni = chat_data[f"cd_{cid}"].get(cd) or await build_node_info(day)
+    # ni = chat_data[f"cd_{cid}"].get(cd) or await build_node_info(day)
+    ni = await build_node_info(day)
     chat_data[f"cd_{cid}"][cd] = ni
     a = [ni.button_b, ni.button_c, ni.button_d, return_button]
     await cq.message.edit(text=ni.text_b, reply_markup=Ikm(a))
@@ -214,7 +216,8 @@ async def view_bandwidth_button(msg: Message, day: int):
     if chat_data.get("packUp"):
         button = [ab, bandwidth_button_b, bandwidth_button_c]
     await msg.edit(text="检测节点中...", reply_markup=Ikm(button))
-    ni = chat_data[f"cd_{msg.chat.id}"].get(cd) or await build_node_info(day)
+    # ni = chat_data[f"cd_{msg.chat.id}"].get(cd) or await build_node_info(day)
+    ni = await build_node_info(day)
     chat_data[f"cd_{msg.chat.id}"][cd] = ni
     text = ni.text_a if chat_data["packUp"] else ni.text_b
     button = (
@@ -247,6 +250,7 @@ class NodeInfoText:
     code: list[int]
 
 
+@cached(ttl=cf_cfg.cache_ttl)
 async def build_node_info(s) -> NodeInfoText:
     """生成节点信息文本和按钮"""
     d = date_shift(int(s))

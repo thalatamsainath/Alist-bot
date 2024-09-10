@@ -8,7 +8,7 @@ from loguru import logger
 
 from api.cloudflare.base import WorkerInfo
 from api.cloudflare.cloudflare_api import CloudflareAPI
-from config.config import CloudFlareInfo
+from config.config import CloudFlareInfo, cf_cfg
 from tools.utils import pybyte
 
 
@@ -20,7 +20,7 @@ class NodeStatus:
 
 # 检查节点状态
 @cached(
-    ttl=300,
+    ttl=cf_cfg.cache_ttl,
     key_builder=lambda f, *args, **kwargs: args[0],
     skip_cache_func=lambda ns: ns.status != 200,
 )  # 缓存5分钟

@@ -128,6 +128,8 @@ class CloudflareConfig(Config):
         self.status_push: bool = self.retrieve("cronjob.status_push")
         self.storage_mgmt: bool = self.retrieve("cronjob.storage_mgmt")
         self.time: str = self.retrieve("cronjob.time")
+        self.cache_enable: bool = self.retrieve("cache.enable", True)
+        self.cache_ttl: int = self.retrieve("cache.ttl", 300)
 
     @property
     def nodes(self) -> list[CloudFlareInfo]:
