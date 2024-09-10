@@ -110,7 +110,7 @@ class CloudflareAPI:
 query getBillingMetrics($accountTag: string, $datetimeStart: string, $datetimeEnd: string, $scriptName: string) {
     viewer {
       accounts(filter: {accountTag: $accountTag}) {
-        workersInvocationsAdaptive(limit: 1000, filter: {
+        workersInvocationsAdaptive(limit: 10000, filter: {
           scriptName: $scriptName,
           datetime_geq: $datetimeStart,
           datetime_leq: $datetimeEnd
@@ -173,7 +173,7 @@ query getBillingMetrics($accountTag: string, $datetimeStart: string, $datetimeEn
 query getBillingMetrics($accountTag: string, $scriptName: string, $datetimeStart: string, $datetimeEnd: string) {
   viewer {
     accounts(filter: {accountTag: $accountTag}) {
-      workersInvocationsAdaptive: pagesFunctionsInvocationsAdaptiveGroups(limit: 1000, filter: {
+      workersInvocationsAdaptive: pagesFunctionsInvocationsAdaptiveGroups(limit: 10000, filter: {
           datetime_geq: $datetimeStart,
           datetime_leq: $datetimeEnd,
       		scriptName: $scriptName}) {
