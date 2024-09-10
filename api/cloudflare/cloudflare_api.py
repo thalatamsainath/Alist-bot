@@ -169,7 +169,7 @@ query getBillingMetrics($accountTag: string, $datetimeStart: string, $datetimeEn
         """
         url = "/graphql"
         query = """
-query getPagesProjectAnalytics_hour($accountTag: string, $scriptName: string, $datetimeStart: string, $datetimeEnd: string) {
+query getBillingMetrics($accountTag: string, $scriptName: string, $datetimeStart: string, $datetimeEnd: string) {
   viewer {
     accounts(filter: {accountTag: $accountTag}) {
       workersInvocationsAdaptive: pagesFunctionsInvocationsAdaptiveGroups(limit: 10, filter: {
