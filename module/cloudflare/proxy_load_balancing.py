@@ -34,6 +34,7 @@ async def redirect_path(path: str, sign: str | None = None):
     r = await available_nodes()
     if not r:
         return FileResponse(
+            status_code=503,
             path="./module/cloudflare/warning.txt",
             filename="网站的下载节点流量已全部用完 早上8点自动恢复.txt",
         )

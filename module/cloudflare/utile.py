@@ -27,6 +27,7 @@ class NodeStatus:
 async def check_node_status(url: str, cli: AsyncClient = None) -> NodeStatus:
     status_code_map = {
         200: [url, 200],
+        401: [url, 200],
         429: [url, 429],
     }
     try:
