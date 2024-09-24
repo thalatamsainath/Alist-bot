@@ -17,6 +17,11 @@ from tools.scheduler_manager import aps
 from tools.utils import encode_url
 
 TEXT_TYPES = []
+REMOVE_PREFIX = True
+REMOVE_PREFIX_TUPLE = (
+    "down/",
+    "proxy/",
+)
 limits = httpx.Limits(max_keepalive_connections=100, max_connections=1000)
 async_client = httpx.AsyncClient(limits=limits)
 
@@ -29,8 +34,9 @@ async def redirect_path(path: str, sign: str | None = None):
     path = encode_url(path, False)
     if not path:
         return Response(content="运行中...", media_type="text/plain; charset=utf-8")
-    if path.startswith("down/"):
-        path = path[5:]
+    if REMOVE_PREFIX and path.startswith(REMOVE_PREFIX_TUPLE):
+        for i in REMOVE_PREFIX_TUPLE:
+            path = path.removeprefix(i)
     r = await available_nodes()
     if not r:
         return FileResponse(
