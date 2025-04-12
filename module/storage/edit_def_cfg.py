@@ -16,7 +16,7 @@ from tools.filters import is_admin
 from tools.utils import translate_key
 
 
-# 取消修改默认配置
+# Cancel modifying default configuration
 @Client.on_callback_query(filters.regex(r"^st_storage_cfg_off$"))
 async def sst_storage_cfg_off_callback(_, __):
     chat_data["st_storage_cfg_amend"] = False
@@ -32,7 +32,7 @@ def _st_storage_cfg_amend_filter(_, __, ___):
 st_storage_cfg_amend_filter = filters.create(_st_storage_cfg_amend_filter)
 
 
-# 修改存储默认配置_按钮回调
+# Modify storage default configuration - button callback
 @Client.on_callback_query(filters.regex(r"^st_storage_cfg_amend$"))
 async def st_storage_amend_callback(_, __):
     chat_data["st_storage_cfg_amend"] = True
@@ -42,18 +42,18 @@ async def st_storage_amend_callback(_, __):
     )
     t = json.dumps(t, indent=4, ensure_ascii=False)
     button = [
-        [InlineKeyboardButton("❌取消修改", callback_data="st_storage_cfg_off")],
-        [InlineKeyboardButton("↩️返回存储管理", callback_data="re_st_menu")],
+        [InlineKeyboardButton("❌Cancel Modification", callback_data="st_storage_cfg_off")],
+        [InlineKeyboardButton("↩️Return to Storage Management", callback_data="re_st_menu")],
     ]
-    text = f"""当前配置：
+    text = f"""Current Configuration:
 <code>{t}</code>
 
-支持的选项：<a href="https://telegra.ph/驱动字典-03-20">点击查看</a>
-先复制当前配置，修改后发送
+Supported Options: <a href="https://telegra.ph/驱动字典-03-20">Click to View</a>
+First copy the current configuration, modify it, and then send it back.
 
-格式（Json）：
-1、每行前面要添加4个空格
-2、除了最后一行，每行后面都要添加英文逗号“,”
+Format (Json):
+1. Add 4 spaces at the beginning of each line.
+2. Add a comma "," at the end of each line except the last one.
 
 """
     await chat_data["storage_menu_button"].edit(
@@ -63,7 +63,7 @@ async def st_storage_amend_callback(_, __):
     )
 
 
-# 修改默认存储配置
+# Modify default storage configuration
 @Client.on_message(
     filters.text & filters.private & st_storage_cfg_amend_filter & is_admin
 )
@@ -71,23 +71,23 @@ async def st_storage_cfg_amend(_, message: Message):
     message_text = message.text
     await message.delete()
     button = [
-        [InlineKeyboardButton("🔄重新修改", callback_data="st_storage_cfg_amend")],
-        [InlineKeyboardButton("↩️返回存储管理", callback_data="re_st_menu")],
+        [InlineKeyboardButton("🔄Modify Again", callback_data="st_storage_cfg_amend")],
+        [InlineKeyboardButton("↩️Return to Storage Management", callback_data="re_st_menu")],
     ]
     try:
         message_text = json.loads(message_text)
     except json.decoder.JSONDecodeError as z:
         await chat_data["storage_menu_button"].edit(
-            text=f"配置错误\n——————————\n请检查配置:\n<code>{message_text}</code>\n{z}",
+            text=f"Configuration Error\n——————————\nPlease check the configuration:\n<code>{message_text}</code>\n{z}",
             reply_markup=InlineKeyboardMarkup(button),
         )
     else:
         new_dict = {
             v: k for k, v in text_dict["common"].items()
-        }  # 调换common键和值的位置
+        }  # Swap keys and values in the common dictionary
         new_add_dict = {
             v: k for k, v in text_dict["additional"].items()
-        }  # 调换additional键和值的位置
+        }  # Swap keys and values in the additional dictionary
         new_dict |= new_add_dict
         t = translate_key(message_text, new_dict)
         st_cfg.storage = t

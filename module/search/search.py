@@ -52,58 +52,58 @@ class Page:
                 )
             ],
             [
-                InlineKeyboardButton("⬆️上一页", callback_data="search_previous_page"),
-                InlineKeyboardButton("⬇️下一页", callback_data="search_next_page"),
+                InlineKeyboardButton("⬆️Previous Page", callback_data="search_previous_page"),
+                InlineKeyboardButton("⬇️Next Page", callback_data="search_next_page"),
             ],
         ]
 
 
-# 设置每页数量
+# Set items per page
 @Client.on_message(filters.command("sl") & is_admin)
 async def sl(_, msg: Message):
     sl_str = " ".join(msg.command[1:])
     if sl_str.isdigit():
         search_cfg.per_page = int(sl_str)
-        await msg.reply(f"已修改: 每页 __{sl_str}__ 条")
+        await msg.reply(f"Modified: __{sl_str}__ items per page")
     else:
-        await msg.reply("例: `/sl 5`")
+        await msg.reply("Example: `/sl 5`")
 
 
-# 设置直链
+# Toggle direct links
 @Client.on_message(filters.command("zl") & is_admin)
 async def zl(_, msg: Message):
     z = search_cfg.z_url
     search_cfg.z_url = not z
-    await msg.reply(f"{'已关闭' if z else '已开启'}直链")
+    await msg.reply(f"{'Disabled' if z else 'Enabled'} direct links")
 
 
-# 设置定时删除时间
+# Set timed delete duration
 @Client.on_message(filters.command("dt") & is_admin)
 async def timed_del(_, msg: Message):
     dt = " ".join(msg.command[1:])
     if msg.chat.type.value == "private":
-        return await msg.reply("请在群组或频道中使用此命令")
+        return await msg.reply("Please use this command in a group or channel")
     if dt.isdigit():
         if int(dt) == 0:
             search_cfg.timed_del = DT(msg.chat.id, 0)
-            return await msg.reply("已关闭定时删除")
+            return await msg.reply("Timed delete disabled")
         search_cfg.timed_del = DT(msg.chat.id, int(dt))
-        await msg.reply(f"已修改: __{dt}__ 秒后删除")
+        await msg.reply(f"Modified: Delete after __{dt}__ seconds")
     else:
-        await msg.reply("设置搜索结果定时删除时间, 0为关闭, 单位: 秒\n例: `/dt 60`")
+        await msg.reply("Set the timed delete duration for search results. Use 0 to disable. Unit: seconds\nExample: `/dt 60`")
 
 
-# 搜索
+# Search
 @Client.on_message(filters.command("s") & is_member)
 async def s(cli: Client, message: Message):
     k = " ".join(message.command[1:])
     if not k:
-        return await message.reply("请加上文件名，例：`/s 巧克力`")
-    msg = await message.reply("搜索中...")
+        return await message.reply("Please include a file name, e.g., `/s chocolate`")
+    msg = await message.reply("Searching...")
 
     result = await alist.search(k)
     if not (c := result.data.content):
-        return await msg.edit("未搜索到文件，换个关键词试试吧")
+        return await msg.edit("No files found. Try a different keyword.")
 
     text, button = await build_result(c, message)
     msg = await msg.edit(
@@ -112,7 +112,7 @@ async def s(cli: Client, message: Message):
         disable_web_page_preview=True,
     )
 
-    # 群组,频道中定时删除消息
+    # Timed delete in groups or channels
     if (
         getattr(search_cfg.timed_del, "time", False)
         and message.chat.type.value != "private"
@@ -126,7 +126,7 @@ async def s(cli: Client, message: Message):
 
 
 async def build_result(content: list[Content], message: Message) -> (str, list):
-    """构建搜索结果消息"""
+    """Build search result message"""
     task = [build_result_item(count, item) for count, item in enumerate(content)]
     text = list(await asyncio.gather(*task))
 
@@ -138,23 +138,23 @@ async def build_result(content: list[Content], message: Message) -> (str, list):
 
 
 async def build_result_item(count: int, item: Content) -> str:
-    """构建搜索结果消息体"""
+    """Build search result message body"""
     file_name, path, file_size, folder = item.name, item.parent, item.size, item.is_dir
 
-    # 如果不是文件夹并且启用了直链，则获取文件直链
+    # If not a folder and direct links are enabled, get the direct link
     dl = (
-        f" | [直接下载]({(await alist.fs_get(f'{path}/{file_name}')).data.raw_url})"
+        f" | [Direct Download]({(await alist.fs_get(f'{path}/{file_name}')).data.raw_url})"
         if not folder and search_cfg.z_url
         else ""
     )
 
     fl = urllib.parse.quote(f"{bot_cfg.alist_web}{path}/{file_name}", safe=":/")
-    file_type = "📁文件夹" if folder else "📄文件"
+    file_type = "📁Folder" if folder else "📄File"
 
-    return f"{count + 1}.{file_type}: `{file_name}`\n[🌐打开网站]({fl}){dl} | __{pybyte(file_size)}__\n\n"
+    return f"{count + 1}.{file_type}: `{file_name}`\n[🌐Open Website]({fl}){dl} | __{pybyte(file_size)}__\n\n"
 
 
-# 翻页
+# Pagination
 @Client.on_callback_query(filters.regex(r"^search"))
 async def search_button_callback(_, query: CallbackQuery):
     data, msg = query.data, query.message

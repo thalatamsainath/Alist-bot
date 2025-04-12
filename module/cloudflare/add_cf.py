@@ -25,8 +25,8 @@ async def account_add_callback(_, query: CallbackQuery):
 async def account_add(query: CallbackQuery):
     text = []
     chat_data["account_add_return_button"] = [
-        InlineKeyboardButton("↩️返回账号", callback_data="account_return"),
-        InlineKeyboardButton("❌关闭菜单", callback_data="cf_close"),
+        InlineKeyboardButton("↩️ Return to account", callback_data="account_return"),
+        InlineKeyboardButton("❌ Close menu", callback_data="cf_close"),
     ]
     if nodes := cf_cfg.nodes:
         for index, value in enumerate(nodes):
@@ -34,17 +34,17 @@ async def account_add(query: CallbackQuery):
             text.append(text_t)
         t = "\n".join(text)
     else:
-        t = "暂无账号"
+        t = "No account yet"
     tt = """
 ——————————————
-<b>添加：</b>
-一次只能添加一个账号
-第一行cf邮箱，第二行global_api_key，例：
+<b>Add:</b>
+Only one account can be added at a time
+The first line is cf email address, the second line is global_api_key, for example:
 <code>abc123@qq.com
 285812f3012365412d33398713c156e2db314
 </code>
-<b>删除：</b>
-*+序号，例：<code>*2</code>
+<b>Delete:</b>
+*+serial number, for example: <code>*2</code>
 """
     await query.message.edit(
         text=t + tt,
@@ -63,7 +63,7 @@ account_add_filter = filters.create(_account_add_filter)
 async def url_select(query: CallbackQuery):
     exist_ids = [node.account_id for node in cf_cfg.nodes]
     index = 0
-    t = "域名列表\n"
+    t = "Domain List\n"
     chat_data["url_select_return_button"] = []
     for key, value in tmp_account_workers_pages.items():
         for k, v in value.items():
@@ -78,14 +78,14 @@ async def url_select(query: CallbackQuery):
             index += 1
             t += f"{index} | <code>{v.url}</code>\n"
         chat_data["url_select_return_button"].append(
-            [InlineKeyboardButton("取消", callback_data=key)]
+            [InlineKeyboardButton("Cancel", callback_data=key)]
         )
         break
 
     tt = """
 ——————————————
-<b>选择域名</b>
-一个worker/page只能绑定一个域名
+<b>Choose a domain name</b>
+One worker/page can only be bound to one domain name.
 """
     await query.message.edit(
         text=t + tt,
@@ -135,8 +135,8 @@ async def account_edit(_, message: Message):
                 if len(lw.result) > 0 or len(lp.result) > 0:
                     account_workers_pages.append((account_id, lw.result, lp.result))
         except Exception as e:
-            logger.error(f"错误：{type(e)} {str(e)}")
-            await chat_data["ad_message"].answer(text=f"错误：{str(e)}")
+            logger.error(f"Error: {type(e)} {str(e)}")
+            await chat_data["ad_message"].answer(text=f"Error: {str(e)}")
         else:
             if account_workers_pages:
                 for account, workers, pages in account_workers_pages:
@@ -179,14 +179,15 @@ async def account_edit(_, message: Message):
                 await url_select(chat_data["ad_message"])
             else:
                 text = f"""
-<b>添加失败: </b>
+<b>Add failed: </b>
 
 <code>{mt}</code>
 
-该域名（<code>{account_workers_pages}</code>）未添加Workers路由
-请检查后重新发送账号
+The Workers route is not added to this domain (<code>{account_workers_pages}</code>)
 
-<b>注：</b>默认使用第一个域名的第一个Workers路由
+Please check and resend the account
+
+<b>Note:</b> The first Workers route of the first domain is used by default
 """
                 await chat_data["ad_message"].message.edit(
                     text=text,

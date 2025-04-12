@@ -1,7 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 
-# 定义一个单例类
+# Define a singleton class
 class Singleton:
     _instance = None
 
@@ -11,15 +11,15 @@ class Singleton:
         return cls._instance
 
 
-# 定义一个类用于 APScheduler，并继承单例类
+# Define a class for APScheduler and inherit from the singleton class
 class APS(Singleton):
-    # 用指定的设置初始化调度器
+    # Initialize the scheduler with specified settings
     def __init__(self):
         self.scheduler = AsyncIOScheduler()
-        # 启动调度器
+        # Start the scheduler
         self.scheduler.start()
 
-    # 向调度器添加一个任务
+    # Add a job to the scheduler
     def add_job(
         self,
         job_id,
@@ -31,18 +31,18 @@ class APS(Singleton):
         **trigger_args
     ):
         """
-        添加任务
+        Add a job
 
-        :param job_id: 任务id，用于唯一标识任务，必须
-        :param func: 任务执行函数，必须
-        :param trigger: 触发器类型，可选，默认为cron表达式
-        :param args: 任务执行函数的参数，为列表类型，可选
-        :param kwargs: 任务执行函数的参数，为字典类型，可选
-        :param name: 任务名称，可选
-        :param trigger_args: 触发器参数，可选
-        :return: 返回True表示添加成功，返回False表示添加失败
+        :param job_id: Job ID, used to uniquely identify the job, required
+        :param func: Job execution function, required
+        :param trigger: Trigger type, optional, default is cron expression
+        :param args: Parameters for the job execution function, as a list, optional
+        :param kwargs: Parameters for the job execution function, as a dictionary, optional
+        :param name: Job name, optional
+        :param trigger_args: Trigger parameters, optional
+        :return: Returns True if the job is added successfully, False otherwise
         """
-        # 检查任务id是否已存在，如果不存在则添加任务，否则返回False
+        # Check if the job ID already exists; if not, add the job, otherwise return False
         return not self.job_exists(job_id) and self.scheduler.add_job(
             id=job_id,
             func=func,
@@ -53,7 +53,7 @@ class APS(Singleton):
             **trigger_args,
         )
 
-    # 修改调度器中已有的任务
+    # Modify an existing job in the scheduler
     def modify_job(
         self,
         job_id,
@@ -65,18 +65,18 @@ class APS(Singleton):
         **trigger_args
     ):
         """
-        修改任务
+        Modify a job
 
-        :param job_id: 任务id，必须
-        :param func: 新的任务执行函数，可选
-        :param trigger: 新的触发器类型，可选
-        :param args: 新的任务执行函数的参数，为列表类型，可选
-        :param kwargs: 新的任务执行函数的参数，为字典类型，可选
-        :param name: 新的任务名称，可选
-        :param trigger_args: 新的触发器参数，可选
-        :return: 返回True表示修改成功，返回False表示修改失败
+        :param job_id: Job ID, required
+        :param func: New job execution function, optional
+        :param trigger: New trigger type, optional
+        :param args: New parameters for the job execution function, as a list, optional
+        :param kwargs: New parameters for the job execution function, as a dictionary, optional
+        :param name: New job name, optional
+        :param trigger_args: New trigger parameters, optional
+        :return: Returns True if the job is modified successfully, False otherwise
         """
-        # 检查任务id是否存在，如果存在则修改任务，否则返回False
+        # Check if the job ID exists; if it does, modify the job, otherwise return False
         return self.job_exists(job_id) and self.scheduler.reschedule_job(
             job_id=job_id,
             func=func,
@@ -87,41 +87,41 @@ class APS(Singleton):
             **trigger_args,
         )
 
-    # 暂停调度器中的一个任务
+    # Pause a job in the scheduler
     def pause_job(self, job_id):
         """
-        暂停任务
+        Pause a job
 
-        :param job_id: 任务id，必须
-        :return: 返回True表示暂停成功，返回False表示暂停失败
+        :param job_id: Job ID, required
+        :return: Returns True if the job is paused successfully, False otherwise
         """
-        # 检查任务id是否存在，如果存在则暂停任务，否则返回False
+        # Check if the job ID exists; if it does, pause the job, otherwise return False
         return self.job_exists(job_id) and self.scheduler.pause_job(job_id)
 
-    # 恢复调度器中暂停的一个任务
+    # Resume a paused job in the scheduler
     def resume_job(self, job_id):
         """
-        恢复任务
+        Resume a job
 
-        :param job_id: 任务id，必须
-        :return: 返回True表示恢复成功，返回False表示恢复失败
+        :param job_id: Job ID, required
+        :return: Returns True if the job is resumed successfully, False otherwise
         """
-        # 检查任务id是否存在，如果存在则恢复任务，否则返回False
+        # Check if the job ID exists; if it does, resume the job, otherwise return False
         return self.job_exists(job_id) and self.scheduler.resume_job(job_id)
 
-    # 从调度器中移除一个任务
+    # Remove a job from the scheduler
     def remove_job(self, job_id):
         """
-        删除任务
+        Remove a job
 
-        :param job_id: 任务id，必须
-        :return: 返回True表示删除成功，返回False表示删除失败
+        :param job_id: Job ID, required
+        :return: Returns True if the job is removed successfully, False otherwise
         """
-        # 检查任务id是否存在，如果存在则删除任务，否则返回False
+        # Check if the job ID exists; if it does, remove the job, otherwise return False
         return self.job_exists(job_id) and self.scheduler.remove_job(job_id)
 
     def job_exists(self, job_id):
-        # 检测任务是否存在，并返回布尔值
+        # Check if the job exists and return a boolean value
         return bool(self.scheduler.get_job(job_id))
 
 

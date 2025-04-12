@@ -19,25 +19,25 @@ from tools.filters import is_admin
 from tools.utils import pybyte
 
 return_button = [
-    InlineKeyboardButton("↩️返回菜单", callback_data="sr_return"),
-    InlineKeyboardButton("❌关闭菜单", callback_data="sr_close"),
+    InlineKeyboardButton("↩️Return to Menu", callback_data="sr_return"),
+    InlineKeyboardButton("❌Close Menu", callback_data="sr_close"),
 ]
 
 
 def btn():
     return [
         [
-            InlineKeyboardButton("🛠修改配置", callback_data="edit_roll"),
+            InlineKeyboardButton("🛠Modify Configuration", callback_data="edit_roll"),
             InlineKeyboardButton(
-                "✅随机推荐" if roll_cfg.roll_disable else "❎随机推荐",
+                "✅Random Recommendation" if roll_cfg.roll_disable else "❎Random Recommendation",
                 callback_data="roll_off" if roll_cfg.roll_disable else "roll_on",
             ),
         ],
-        [InlineKeyboardButton("❌关闭菜单", callback_data="sr_close")],
+        [InlineKeyboardButton("❌Close Menu", callback_data="sr_close")],
     ]
 
 
-# 随机推荐菜单
+# Random Recommendation Menu
 @Client.on_message(filters.command("sr") & filters.private & is_admin)
 async def sr_menu(_, message: Message):
     chat_data["sr_menu"] = await message.reply(
@@ -45,7 +45,7 @@ async def sr_menu(_, message: Message):
     )
 
 
-# 随机推荐
+# Random Recommendation
 @Client.on_message(filters.command("roll"))
 async def roll(_, message: Message):
     if bot_cfg.member and message.chat.id not in bot_cfg.member:
@@ -55,7 +55,7 @@ async def roll(_, message: Message):
     roll_str = " ".join(message.command[1:])
     if roll_str.replace("？", "?") == "?":
         t = "\n".join(list(roll_cfg.path.keys()))
-        text = f"已添加的关键词：\n<code>{t}</code>"
+        text = f"Added Keywords:\n<code>{t}</code>"
         return await message.reply(text)
     if roll_cfg.path:
         names, sizes, url = await generate(key=roll_str or "")
@@ -65,10 +65,10 @@ async def roll(_, message: Message):
 """
         await message.reply(text, disable_web_page_preview=True)
     else:
-        await message.reply("请先添加路径")
+        await message.reply("Please add a path first")
 
 
-# 菜单按钮回调
+# Menu Button Callback
 @Client.on_callback_query(filters.regex("^sr_"))
 async def menu(_, query: CallbackQuery):
     data = query.data
@@ -82,7 +82,7 @@ async def menu(_, query: CallbackQuery):
         await chat_data["sr_menu"].edit(text=random_kaomoji())
 
 
-# 修改配置按钮回调
+# Modify Configuration Button Callback
 @Client.on_callback_query(filters.regex("edit_roll"))
 async def edit_roll(_, query: CallbackQuery):
     j = json.dumps(roll_cfg.path, indent=4, ensure_ascii=False)
@@ -93,14 +93,14 @@ async def edit_roll(_, query: CallbackQuery):
 ```
 
 
-修改后发送，格式为json
-一个关键词可以包含多个路径，使用列表格式
+Send after modification, format as JSON
+A keyword can contain multiple paths, use list format
 """
         if j != "null"
         else """
 ```json
 {
-    "关键词": "路径",
+    "Keyword": "Path",
     "slg": "/slg",
     "gal": [
         "/gal",
@@ -109,8 +109,8 @@ async def edit_roll(_, query: CallbackQuery):
 }
 ```
 
-修改后发送，格式为json
-一个关键词可以包含多个路径，使用列表格式
+Send after modification, format as JSON
+A keyword can contain multiple paths, use list format
 """
     )
     await query.message.edit(
@@ -119,7 +119,7 @@ async def edit_roll(_, query: CallbackQuery):
     chat_data["edit_roll"] = True
 
 
-# 开关回调
+# Toggle Callback
 @Client.on_callback_query(filters.regex("^roll_"))
 async def roll_of(_, message):
     query = message.data
@@ -136,25 +136,25 @@ def _edit_roll_filter(_, __, ___):
 edit_roll_filter = filters.create(_edit_roll_filter)
 
 
-# 写入配置
+# Write Configuration
 @Client.on_message(filters.text & filters.private & edit_roll_filter & is_admin)
 async def change_setting(_, message: Message):
     msg = message.text
     try:
         path = json.loads(msg)
     except Exception as e:
-        await message.reply(text=f"错误：{str(e)}\n\n请修改后重新发送")
+        await message.reply(text=f"Error: {str(e)}\n\nPlease modify and resend")
     else:
         await message.delete()
         chat_data["edit_roll"] = False
         roll_cfg.path = path
         await chat_data["sr_menu"].edit(
-            text="修改成功", reply_markup=InlineKeyboardMarkup(btn())
+            text="Modification Successful", reply_markup=InlineKeyboardMarkup(btn())
         )
 
 
 async def generate(key=""):
-    # 使用os.urandom生成随机字节串作为种子
+    # Use os.urandom to generate random bytes as seed
     random.seed(os.urandom(32))
 
     values_list = list(roll_cfg.path.values()) if key == "" else roll_cfg.path[key]
@@ -172,7 +172,7 @@ async def generate(key=""):
     return name, pybyte(size), url
 
 
-# 递归列表，返回随机值
+# Recursive List, Return Random Value
 def get_random_value(data):
     if not isinstance(data, list):
         return data

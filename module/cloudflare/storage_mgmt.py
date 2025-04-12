@@ -17,17 +17,17 @@ from module.cloudflare.utile import NodeStatus, check_node_status, re_remark
 from tools.scheduler_manager import aps
 
 _D = {
-    "auto_switch_nodes": "自动切换节点",
-    "status_push": "节点状态推送",
-    "storage_mgmt": "自动存储管理",
-    "bandwidth_push": "每日流量统计",
-    "proxy_load_balance": "代理负载均衡",
+    "auto_switch_nodes": "Auto Switch Nodes",
+    "status_push": "Node Status Push",
+    "storage_mgmt": "Automatic Storage Management",
+    "bandwidth_push": "Daily Bandwidth Statistics",
+    "proxy_load_balance": "Proxy Load Balancing",
 }
 
 
 def switch(client: Client, enable: bool, option, job_id, mode):
     setattr(cf_cfg, option, enable)
-    logger.info(f"已{'开启' if enable else '关闭'}:{_D[option]}")
+    logger.info(f"{'Enabled' if enable else 'Disabled'}:{_D[option]}")
 
     job_functions = {
         "cronjob_bandwidth_push": send_cronjob_bandwidth_push,
@@ -38,7 +38,7 @@ def switch(client: Client, enable: bool, option, job_id, mode):
         not any([cf_cfg.status_push, cf_cfg.storage_mgmt, cf_cfg.auto_switch_nodes])
         or option == "bandwidth_push"
     ):
-        logger.info("已关闭:节点监控")
+        logger.info("Disabled: Node Monitoring")
         aps.pause_job(job_id)
     elif enable:
         aps.resume_job(job_id=job_id)
@@ -63,45 +63,45 @@ async def toggle_auto_management(
     await r_cf_menu(cq)
 
 
-# 按钮回调 节点状态
+# Button callback for Node Status
 @Client.on_callback_query(filters.regex("^status_push"))
 async def status_push(cli: Client, cq: CallbackQuery):
     await toggle_auto_management(cli, cq, "status_push", "cronjob_status_push", 1)
 
 
-# 按钮回调 每日带宽统计
+# Button callback for Daily Bandwidth Statistics
 @Client.on_callback_query(filters.regex("^bandwidth_push"))
 async def bandwidth_push(cli: Client, cq: CallbackQuery):
     await toggle_auto_management(cli, cq, "bandwidth_push", "cronjob_bandwidth_push", 0)
 
 
-# 按钮回调 自动存储管理
+# Button callback for Automatic Storage Management
 @Client.on_callback_query(filters.regex("^storage_mgmt"))
 async def storage_mgmt(cli: Client, cq: CallbackQuery):
     await toggle_auto_management(cli, cq, "storage_mgmt", "cronjob_status_push", 1)
 
 
-# 按钮回调 自动切换节点
+# Button callback for Auto Switch Nodes
 @Client.on_callback_query(filters.regex("^auto_switch_nodes"))
 async def auto_switch_nodes(cli: Client, cq: CallbackQuery):
     await toggle_auto_management(cli, cq, "auto_switch_nodes", "cronjob_status_push", 1)
 
 
-# 按钮回调 代理负载均衡
+# Button callback for Proxy Load Balancing
 @Client.on_callback_query(filters.regex("^proxy_load_balance"))
 async def proxy_load_balance_switch(_, cq: CallbackQuery):
     plb_cfg.enable = not plb_cfg.enable
     if plb_cfg.enable:
         run_fastapi()
-    logger.info(f"已{'开启' if plb_cfg.enable else '关闭'}:代理负载均衡")
+    logger.info(f"{'Enabled' if plb_cfg.enable else 'Disabled'}:Proxy Load Balancing")
     await r_cf_menu(cq)
 
 
-# 带宽通知定时任务
+# Bandwidth Notification Scheduled Task
 async def send_cronjob_bandwidth_push(app):
     if cf_cfg.nodes:
         ni = await build_node_info(0)
-        text = "今日流量统计"
+        text = "Today's Bandwidth Statistics"
         for i in cf_cfg.chat_id:
             await app.send_message(
                 chat_id=i,
@@ -118,23 +118,23 @@ def start_bandwidth_push(app):
             trigger=CronTrigger.from_crontab(cf_cfg.time),
             job_id="cronjob_bandwidth_push",
         )
-        logger.info("带宽通知已启动")
+        logger.info("Bandwidth Notification Started")
 
 
-# 节点状态通知定时任务
+# Node Status Notification Scheduled Task
 async def send_cronjob_status_push(app: Client):
     if not cf_cfg.nodes:
         return
 
     nodes = [value.url for value in cf_cfg.nodes]
     task = [check_node_status(node) for node in nodes]
-    # 全部节点
+    # All nodes
     results: list[NodeStatus] = [
-        reulst
-        for reulst in await asyncio.gather(*task, return_exceptions=True)
-        if not isinstance(reulst, BaseException)
+        result
+        for result in await asyncio.gather(*task, return_exceptions=True)
+        if not isinstance(result, BaseException)
     ]
-    # 可用节点
+    # Available nodes
     available_nodes = await returns_the_available_nodes(results)
 
     task = [r_(node_status.url, node_status.status) for node_status in results]
@@ -167,12 +167,12 @@ def start_status_push(app):
             job_id="cronjob_status_push",
             seconds=60,
         )
-        logger.info("节点监控已启动")
+        logger.info("Node Monitoring Started")
 
 
-# 检测全部节点状态
+# Check all node statuses
 async def r_(node: str, status_code: int):
-    # 第一次获取默认设置为状态正常
+    # First time fetching, default status is normal
     if not chat_data.get(node):
         chat_data[node] = 200
         chat_data[f"{node}_count"] = 0
@@ -180,7 +180,7 @@ async def r_(node: str, status_code: int):
     if status_code != 200:
         chat_data[f"{node}_count"] += 1
 
-        # 错误大于3次运行，否则不运行后面代码
+        # If errors are less than or equal to 3, do not proceed further
         if 0 < chat_data[f"{node}_count"] <= 3:
             return []
     return [node, status_code]
@@ -189,38 +189,38 @@ async def r_(node: str, status_code: int):
 async def failed_node_management(
     app: Client, node, status_code, available_nodes
 ) -> list:
-    # 如果和上一次状态码一样，则不执行
+    # If the status code is the same as the last one, do not proceed
     if status_code == chat_data[node]:
         return []
     chat_data[node] = status_code
     chat_data[f"{node}_count"] = 0
-    # 状态通知
+    # Status notification
     await notify_status_change(app, node, status_code)
 
-    # 自动管理
+    # Automatic management
     try:
         st = (await alist.storage_list()).data
     except Exception:
-        logger.error("自动管理存储错误：获取存储列表失败")
+        logger.error("Automatic storage management error: Failed to fetch storage list")
     else:
         task = [manage_storage(dc, node, status_code, available_nodes) for dc in st]
         return [i for i in await asyncio.gather(*task, return_exceptions=True) if i]
 
 
 async def manage_storage(dc: StorageInfo, node, status_code, available_nodes) -> str:
-    # 如果代理url等于node，且存储开启了代理
+    # If the proxy URL equals the node and storage proxy is enabled
     proxy_url = f"https://{node}"
     use_proxy = dc.webdav_policy == "use_proxy_url" or dc.web_proxy
     if dc.down_proxy_url != proxy_url or not use_proxy:
         return ""
 
-    # 节点正常且存储关闭
+    # Node is normal and storage is disabled
     if status_code == 200 and dc.disabled:
         await alist.storage_enable(dc.id)
-        return f"🟢|<code>{node}</code>|已开启存储:\n<code>{dc.mount_path}</code>"
-    # 节点失效且存储开启
+        return f"🟢|<code>{node}</code>|Storage Enabled:\n<code>{dc.mount_path}</code>"
+    # Node is unavailable and storage is enabled
     if status_code != 200 and not dc.disabled:
-        # 开启自动切换节点切有可用节点
+        # Enable auto-switch nodes if available
         if cf_cfg.auto_switch_nodes and available_nodes:
             random_node = random.choice(available_nodes)
             dc.down_proxy_url = random_node
@@ -229,36 +229,36 @@ async def manage_storage(dc: StorageInfo, node, status_code, available_nodes) ->
             dc.remark = re_remark(dc.remark, d)
 
             await alist.storage_update(dc)
-            return f"🟡|<code>{dc.mount_path}</code>\n已自动切换节点: <code>{node}</code> >> <code>{d}</code>"
+            return f"🟡|<code>{dc.mount_path}</code>\nAuto-switched node: <code>{node}</code> >> <code>{d}</code>"
         elif cf_cfg.storage_mgmt:
             await alist.storage_disable(dc.id)
-            return f"🔴|<code>{node}</code>|已关闭存储:\n<code>{dc.mount_path}</code>"
+            return f"🔴|<code>{node}</code>|Storage Disabled:\n<code>{dc.mount_path}</code>"
 
 
-# 筛选出可用节点
+# Filter available nodes
 async def returns_the_available_nodes(results: list[NodeStatus]) -> list:
     """
-    筛选出可用节点，移除已用节点
+    Filter available nodes, remove used nodes
     :param results:
     :return:
     """
-    # 可用节点
+    # Available nodes
     node_pool = [f"https://{ns.url}" for ns in results if ns.status == 200]
-    # 已经在使用的节点
+    # Nodes already in use
     sl = (await alist.storage_list()).data
     used_node = [
         node.down_proxy_url
         for node in sl
         if node.webdav_policy == "use_proxy_url" or node.web_proxy
     ]
-    # 将已用的节点从可用节点中删除，删除后没有节点了就重复使用节点
+    # Remove used nodes from available nodes, reuse nodes if none are left
     return [x for x in node_pool if x not in used_node] or node_pool
 
 
-# 发送节点状态
+# Send node status
 async def notify_status_change(app: Client, node, status_code):
-    t_l = {200: f"🟢|<code>{node}</code>|恢复", 429: f"🔴|<code>{node}</code>|掉线"}
-    text = t_l.get(status_code, f"⭕️|<code>{node}</code>|故障")
+    t_l = {200: f"🟢|<code>{node}</code>|Recovered", 429: f"🔴|<code>{node}</code>|Offline"}
+    text = t_l.get(status_code, f"⭕️|<code>{node}</code>|Error")
     logger.info(text) if status_code == 200 else logger.warning(text)
 
     if cf_cfg.status_push:
@@ -268,4 +268,4 @@ async def notify_status_change(app: Client, node, status_code):
                     chat_id=chat_id, text=text, parse_mode=ParseMode.HTML
                 )
             except Exception as ex:
-                logger.error(f"节点状态发送失败|{chat_id}::{ex}")
+                logger.error(f"Failed to send node status | {chat_id}::{ex}")

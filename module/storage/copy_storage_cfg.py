@@ -18,16 +18,16 @@ from tools.filters import is_admin
 from tools.utils import translate_key
 
 
-# 发送 复制存储配置 按钮列表
+# Send Copy Storage Configuration button list
 @Client.on_callback_query(filters.regex(r"^st_storage_copy_list$"))
 async def st_storage_copy_list(_, __):
     await get_storage(callback_data_pr="st_storage_copy_cfg")
     await chat_data["storage_menu_button"].edit(
-        text="点击复制存储配置：", reply_markup=InlineKeyboardMarkup(button_list)
+        text="Click to copy storage configuration:", reply_markup=InlineKeyboardMarkup(button_list)
     )
 
 
-# 复制存储配置
+# Copy Storage Configuration
 @Client.on_callback_query(filters.regex(r"^st_storage_copy_cfg") & is_admin)
 async def st_storage_copy_cfg(_, query: CallbackQuery):
     bvj = int(query.data.strip("st_storage_copy_cfg"))
@@ -42,13 +42,13 @@ async def st_storage_copy_cfg(_, query: CallbackQuery):
     )
     get_a.update(get_b)
     delete = [
-        "额外信息",
-        "状态",
-        "修改时间",
-        "禁用",
-        "id",
-        "驱动",
-        "是否Sharepoint",
+        "Additional Information",
+        "Status",
+        "Modification Time",
+        "Disabled",
+        "ID",
+        "Driver",
+        "Is SharePoint",
         "AccessToken",
     ]
     for i in delete:
@@ -56,11 +56,11 @@ async def st_storage_copy_cfg(_, query: CallbackQuery):
             get_a.pop(i)
         except KeyError:
             ...
-    get_a["备注"] = get_a["备注"].replace("\n", " ")
+    get_a["Remarks"] = get_a["Remarks"].replace("\n", " ")
     text_list = [f"{i} = {get_a[i]}\n" for i in get_a.keys()]
     text = "".join(text_list)
     await chat_data["storage_menu_button"].edit(
-        text=f"```存储配置\n{text}```",
+        text=f"```Storage Configuration\n{text}```",
         reply_markup=InlineKeyboardMarkup(button_list),
         disable_web_page_preview=True,
     )

@@ -29,11 +29,11 @@ async_client = httpx.AsyncClient(limits=limits)
 @fast.get("/{path:path}")
 async def redirect_path(path: str, sign: str | None = None):
     if not plb_cfg.enable:
-        return PlainTextResponse("代理负载均衡已关闭", status_code=503)
+        return PlainTextResponse("Proxy load balancing is disabled", status_code=503)
 
     path = encode_url(path, False)
     if not path:
-        return Response(content="运行中...", media_type="text/plain; charset=utf-8")
+        return Response(content="Running...", media_type="text/plain; charset=utf-8")
     if REMOVE_PREFIX and path.startswith(REMOVE_PREFIX_TUPLE):
         for i in REMOVE_PREFIX_TUPLE:
             path = path.removeprefix(i)
@@ -42,7 +42,7 @@ async def redirect_path(path: str, sign: str | None = None):
         return FileResponse(
             status_code=503,
             path="./module/cloudflare/warning.txt",
-            filename="网站的下载节点流量已全部用完 早上8点自动恢复.txt",
+            filename="All download node traffic for the website has been used up. It will automatically recover at 8 AM.txt",
         )
     new_url = f"https://{r}/{path}?sign={alist.sign(f'/{path}') if not sign else sign}"
     ext = path.split(".")[-1]
@@ -52,7 +52,7 @@ async def redirect_path(path: str, sign: str | None = None):
 
 
 def init_node(app):
-    # 文本文件不能直接重定向, 需要先获取文件内容再返回
+    # Text files cannot be directly redirected, need to fetch file content first and then return
     global TEXT_TYPES
     r: AListAPIResponse[SettingInfo] = app.loop.run_until_complete(
         alist.setting_get("text_types")
@@ -68,7 +68,7 @@ def init_node(app):
 
 
 async def forward_text(new_url):
-    """处理文本文件"""
+    """Handle text files"""
     response = await async_client.get(new_url)
     headers = dict(response.headers)
     headers.pop("content-encoding", None)
@@ -81,20 +81,20 @@ async def forward_text(new_url):
 
 
 async def available_nodes():
-    """随机获取一个可用节点, 如果一直使用一个节点, 请求量过大时会被限制"""
+    """Randomly get an available node. If the same node is used continuously, it may be restricted due to high request volume."""
     if not (node_list := chat_data.get("node_list")):
         return
     return await random_node(node_list)
 
 
 async def random_node(node_list):
-    """随机选择一个节点, 如果节点不可用则重新选择"""
+    """Randomly select a node. If the node is unavailable, reselect."""
     r = await check_node_status(random.choice(node_list), async_client)
     return r.url if r.status == 200 else await random_node(node_list)
 
 
 async def refresh_nodes_regularly():
-    """刷新可用节点池"""
+    """Refresh the pool of available nodes"""
     # tasks = [get_node_info(i) for i in cf_cfg.nodes]
     # result_list = [
     #     result[0]
@@ -109,10 +109,10 @@ async def refresh_nodes_regularly():
     node_list = []
     for i in r:
         if isinstance(i, BaseException):
-            logger.error(f"刷新节点错误: {type(i)} {i}")
+            logger.error(f"Error refreshing node: {type(i)} {i}")
             continue
         if i.status == 200:
             node_list.append(i.url)
 
     chat_data["node_list"] = node_list
-    logger.info(f"节点已刷新 | {node_list}")
+    logger.info(f"Nodes refreshed | {node_list}")

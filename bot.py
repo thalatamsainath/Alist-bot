@@ -19,7 +19,7 @@ logger.add("logs/bot.log", rotation="5 MB")
 scheduler = AsyncIOScheduler()
 
 proxy = {
-    "scheme": bot_cfg.scheme,  # 支持“socks4”、“socks5”和“http”
+    "scheme": bot_cfg.scheme,  # Supports "socks4", "socks5", and "http"
     "hostname": bot_cfg.hostname,
     "port": bot_cfg.port,
 }
@@ -32,34 +32,34 @@ app = Client(
     api_id=bot_cfg.api_id,
     api_hash=bot_cfg.api_hash,
     plugins=plugins,
-    lang_code="zh",
+    lang_code="en",
 )
 
 
-# 设置菜单
+# Set menu
 @app.on_message(filters.command("menu") & filters.private & is_admin)
 async def menu(_, message: Message):
-    # 管理员私聊可见
+    # Visible to administrators in private chat
     admin_cmd = {
-        "s": "搜索文件",
-        "roll": "随机推荐",
-        "sl": "设置搜索结果数量",
-        "zl": "开启/关闭直链",
-        "dt": "设置搜索结果定时删除",
-        "st": "存储管理",
-        "sf": "Cloudflare节点管理",
-        "vb": "查看下载节点信息",
-        "bc": "备份Alist配置",
-        "sbt": "设置定时备份",
-        "sr": "随机推荐设置",
-        "od": "离线下载",
-        "help": "查看帮助",
+        "s": "Search for files",
+        "roll": "Random recommendations",
+        "sl": "Set the number of search results",
+        "zl": "Turn on/off direct links",
+        "dt": "Set timed deletion of search results",
+        "st": "Storage management",
+        "sf": "Cloudflare node management",
+        "vb": "View download node information",
+        "bc": "Backup Alist configuration",
+        "sbt": "Set scheduled backup",
+        "sr": "Random recommendation settings",
+        "od": "Offline download",
+        "help": "View help",
     }
-    # 全部可见
+    # Visible to all users
     user_cmd = {
-        "s": "搜索文件",
-        "roll": "随机推荐",
-        "vb": "查看下载节点信息",
+        "s": "Search file",
+        "roll": "Random recommendation",
+        "vb": "View download node information",
     }
     admin_cmd = [BotCommand(k, v) for k, v in admin_cmd.items()]
     user_cmd = [BotCommand(k, v) for k, v in user_cmd.items()]
@@ -69,20 +69,20 @@ async def menu(_, message: Message):
         admin_cmd, scope=pyrogram.types.BotCommandScopeChat(chat_id=bot_cfg.admin)
     )
     await app.set_bot_commands(user_cmd)
-    await message.reply("菜单设置成功，请退出聊天界面重新进入来刷新菜单")
+    await message.reply("The menu has been set successfully. Please exit the chat interface and re-enter to refresh the menu.")
 
 
-# bot启动时验证
+# Bot startup verification
 def checking():
     try:
         app.loop.run_until_complete(alist.storage_list())
     except httpx.HTTPStatusError:
-        logger.error("连接Alist失败，请检查配置alist_host是否填写正确")
+        logger.error("Failed to connect to Alist, please check whether the configuration alist_host is filled in correctly")
         exit()
     except httpx.ReadTimeout:
-        logger.error("连接Alist超时，请检查网站状态")
+        logger.error("Connection to Alist timed out, please check the website status")
         exit()
-    return logger.info("Bot开始运行...")
+    return logger.info("Bot starts running...")
 
 
 fast = FastAPI()
@@ -100,7 +100,7 @@ def run_fastapi():
         names = [task.get_name() for task in asyncio.all_tasks(app.loop)]
         if "fastapi" not in names:
             app.loop.create_task(_start(), name="fastapi")
-        logger.info(f"代理负载均衡已启动 | http://127.0.0.1:{plb_cfg.port}")
+        logger.info(f"Proxy load balancing has started | http://127.0.0.1:{plb_cfg.port}")
 
 
 if __name__ == "__main__":

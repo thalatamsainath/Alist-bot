@@ -25,39 +25,39 @@ from tools.step_statu import step
 from tools.utils import pybyte
 
 return_button = [
-    Ikb("↩️返回菜单", "cf_return"),
-    Ikb("❌关闭菜单", "cf_close"),
+    Ikb("↩️Return to Menu", "cf_return"),
+    Ikb("❌Close Menu", "cf_close"),
 ]
 
 
 def btn():
     return [
-        [Ikb("⚙️CF节点管理", "⚙️")],
+        [Ikb("⚙️CF Node Management", "⚙️")],
         [
-            Ikb("👀查看节点", "cf_menu_node_status"),
-            Ikb("📅通知设置", "cf_menu_cronjob"),
-            Ikb("🆔账号管理", "cf_menu_account"),
+            Ikb("👀View Nodes", "cf_menu_node_status"),
+            Ikb("📅Notification Settings", "cf_menu_cronjob"),
+            Ikb("🆔Account Management", "cf_menu_account"),
         ],
         [
-            Ikb("⚡️功能开关", "⚡️"),
+            Ikb("⚡️Feature Toggle", "⚡️"),
         ],
         [
-            _bt("节点状态推送", "status_push", cf_cfg.status_push),
-            _bt("每日流量统计", "bandwidth_push", cf_cfg.bandwidth_push),
+            _bt("Node Status Push", "status_push", cf_cfg.status_push),
+            _bt("Daily Bandwidth Statistics", "bandwidth_push", cf_cfg.bandwidth_push),
         ],
         [
-            _bt("自动存储管理", "storage_mgmt", cf_cfg.storage_mgmt),
-            _bt("自动切换节点", "auto_switch_nodes", cf_cfg.auto_switch_nodes),
+            _bt("Automatic Storage Management", "storage_mgmt", cf_cfg.storage_mgmt),
+            _bt("Automatic Node Switching", "auto_switch_nodes", cf_cfg.auto_switch_nodes),
         ],
         [
-            _bt("代理负载均衡", "proxy_load_balance", plb_cfg.enable),
+            _bt("Proxy Load Balancing", "proxy_load_balance", plb_cfg.enable),
         ],
         [
-            Ikb("🔀存储随机代理", "random_node"),
-            Ikb("🔂存储统一代理", "unified_node"),
+            Ikb("🔀Random Proxy Storage", "random_node"),
+            Ikb("🔂Unified Proxy Storage", "unified_node"),
         ],
         [
-            Ikb("❌关闭菜单", "cf_close"),
+            Ikb("❌Close Menu", "cf_close"),
         ],
     ]
 
@@ -72,25 +72,25 @@ bandwidth_button_a = [
     Ikb("⭕️---", "gns_total_bandwidth"),
 ]
 bandwidth_button_b = [
-    Ikb("📈总请求：---", "gns_total_bandwidth"),
-    Ikb("📊总带宽：---", "gns_total_bandwidth"),
+    Ikb("📈Total Requests: ---", "gns_total_bandwidth"),
+    Ikb("📊Total Bandwidth: ---", "gns_total_bandwidth"),
 ]
 bandwidth_button_c = [
-    Ikb("🔙上一天", "gns_status_up"),
+    Ikb("🔙Previous Day", "gns_status_up"),
     Ikb("---", "gns_status_calendar"),
-    Ikb("下一天🔜", "gns_status_down"),
+    Ikb("Next Day🔜", "gns_status_down"),
 ]
 
 
 #####################################################################################
 #####################################################################################
-# 按钮回调
+# Button callbacks
 
 
 @Client.on_callback_query(filters.regex("^cf_close$"))
 async def cf_close_callback(_, cq: CallbackQuery):
     chat_data["account_add"] = False
-    await cq.message.edit(text="已退出『节点管理』")
+    await cq.message.edit(text="Exited 'Node Management'")
 
 
 @Client.on_callback_query(filters.regex("^cf_menu_account$"))
@@ -116,7 +116,7 @@ async def cf_return_callback(_, cq: CallbackQuery):
     await r_cf_menu(cq)
 
 
-# 节点状态按钮回调
+# Node status button callbacks
 @Client.on_callback_query(filters.regex("^gns_"))
 async def node_status(_, cq: CallbackQuery):
     query = cq.data
@@ -157,27 +157,27 @@ async def menu_text():
         ]
 
         return f"""
-节点数量：{len(nodes)}
-🟢  正常：{results.count(200)}
-🔴  掉线：{results.count(429)}
-⭕️  错误：{results.count(502)}
+Number of nodes: {len(nodes)}
+🟢  Normal: {results.count(200)}
+🔴  Offline: {results.count(429)}
+⭕️  Error: {results.count(502)}
 """
-    return "Cloudflare节点管理\n暂无账号，请先添加cf账号"
+    return "Cloudflare Node Management\nNo accounts available, please add a CF account first."
 
 
-# cf菜单
+# CF menu
 @Client.on_message(filters.command("sf") & filters.private & is_admin)
 async def cf_menu(_, message: Message):
-    msg = await message.reply(text="检测节点中...", reply_markup=Ikm(btn()))
+    msg = await message.reply(text="Checking nodes...", reply_markup=Ikm(btn()))
     await msg.edit(text=await menu_text(), reply_markup=Ikm(btn()))
 
 
-# 返回菜单
+# Return to menu
 async def r_cf_menu(query: CallbackQuery):
     await query.message.edit(text=await menu_text(), reply_markup=Ikm(btn()))
 
 
-# 菜单中的节点状态
+# Node status in menu
 async def send_node_status(cq: CallbackQuery, day):
     cid = cq.message.chat.id
     chat_data["node_status_mode"] = "menu"
@@ -185,7 +185,7 @@ async def send_node_status(cq: CallbackQuery, day):
         chat_data[f"cd_{cid}"] = {}
 
     button = [bandwidth_button_a, bandwidth_button_b, bandwidth_button_c, return_button]
-    await cq.message.edit(text="检测节点中...", reply_markup=Ikm(button))
+    await cq.message.edit(text="Checking nodes...", reply_markup=Ikm(button))
     cd = f"gns_expansion_{day}"
     # ni = chat_data[f"cd_{cid}"].get(cd) or await build_node_info(day)
     ni = await build_node_info(day)
@@ -194,7 +194,7 @@ async def send_node_status(cq: CallbackQuery, day):
     await cq.message.edit(text=ni.text_b, reply_markup=Ikm(a))
 
 
-# 使用指令查看节点信息
+# Use command to view node information
 @Client.on_message(filters.command("vb") & is_member)
 async def view_bandwidth(_, msg: Message):
     chat_data["node_status_mode"] = "command"
@@ -202,20 +202,20 @@ async def view_bandwidth(_, msg: Message):
     chat_data[f"cd_{msg.chat.id}"] = {}
 
     day = int(msg.command[1]) if msg.command[1:] else 0
-    msg = await msg.reply(text="检测节点中...")
+    msg = await msg.reply(text="Checking nodes...")
     await view_bandwidth_button(msg, day)
 
 
-# view_bandwidth按钮
+# View_bandwidth button
 async def view_bandwidth_button(msg: Message, day: int):
-    state = "🔼点击展开🔼" if chat_data["packUp"] else "🔽点击收起🔽"
+    state = "🔼Click to expand🔼" if chat_data["packUp"] else "🔽Click to collapse🔽"
     cd = f"gns_expansion_{day}"
     ab = [Ikb(state, callback_data=cd)]
 
     button = [ab, bandwidth_button_a, bandwidth_button_b, bandwidth_button_c]
     if chat_data.get("packUp"):
         button = [ab, bandwidth_button_b, bandwidth_button_c]
-    await msg.edit(text="检测节点中...", reply_markup=Ikm(button))
+    await msg.edit(text="Checking nodes...", reply_markup=Ikm(button))
     # ni = chat_data[f"cd_{msg.chat.id}"].get(cd) or await build_node_info(day)
     ni = await build_node_info(day)
     chat_data[f"cd_{msg.chat.id}"][cd] = ni
@@ -252,10 +252,10 @@ class NodeInfoText:
 
 @cached(ttl=cf_cfg.cache_ttl)
 async def build_node_info(s) -> NodeInfoText:
-    """生成节点信息文本和按钮"""
+    """Generate node information text and buttons"""
     d = date_shift(int(s))
     if not cf_cfg.nodes:
-        t = "请先添加账号"
+        t = "Please add an account first"
         b = Ikb(t, t)
         return NodeInfoText(t, t, [b], [b], [b], [])
 
@@ -271,10 +271,10 @@ async def build_node_info(s) -> NodeInfoText:
     request = f"{int(sum(i.worker_info.requests for i in results) / 10000)}W"
 
     text_a = f"""
-节点数量：{len(code)}
-🟢  正常：{code.count(200)}
-🔴  掉线：{code.count(429)}
-⭕️  错误：{code.count(502)}
+Number of nodes: {len(code)}
+🟢  Normal: {code.count(200)}
+🔴  Offline: {code.count(429)}
+⭕️  Error: {code.count(502)}
 """
 
     button_b = [
@@ -283,22 +283,22 @@ async def build_node_info(s) -> NodeInfoText:
         Ikb(f"⭕️{code.count(502)}", "gns_total_bandwidth"),
     ]
     button_c = [
-        Ikb(f"📊总请求：{request}", "gns_total_bandwidth"),
-        Ikb(f"📈总带宽：{pybyte(total_bandwidth)}", "gns_total_bandwidth"),
+        Ikb(f"📊Total requests: {request}", "gns_total_bandwidth"),
+        Ikb(f"📈Total bandwidth: {pybyte(total_bandwidth)}", "gns_total_bandwidth"),
     ]
     button_d = [
-        Ikb("🔙上一天", "gns_status_up"),
+        Ikb("🔙Previous day", "gns_status_up"),
         Ikb(d[0], "gns_status_calendar"),
-        Ikb("下一天🔜", "gns_status_down"),
+        Ikb("Next day🔜", "gns_status_down"),
     ]
 
     return NodeInfoText(text_a, text_b, button_b, button_c, button_d, code)
 
 
-# 账号管理
+# Account management
 async def account(query: CallbackQuery):
     text = []
-    button = [Ikb("编辑", callback_data="account_add")]
+    button = [Ikb("Edit", callback_data="account_add")]
     if nodes := cf_cfg.nodes:
         for index, value in enumerate(nodes):
             text_t = (
@@ -307,20 +307,20 @@ async def account(query: CallbackQuery):
             text.append(text_t)
         t = "\n".join(text)
     else:
-        t = "暂无账号"
+        t = "No accounts available"
     await query.message.edit(text=t, reply_markup=Ikm([button, return_button]))
 
 
-# 通知设置
+# Notification settings
 async def cronjob_set(cq: CallbackQuery):
     text = f"""
-发送到: `{",".join(list(map(str, cf_cfg.chat_id))) if cf_cfg.chat_id else None}`
-时间: `{cf_cfg.time or None}`
+Send to: `{",".join(list(map(str, cf_cfg.chat_id))) if cf_cfg.chat_id else None}`
+Time: `{cf_cfg.time or None}`
 ——————————
-**发送到** | 可以填用户/群组/频道 id，支持多个，用英文逗号隔开
-**时间** | __每日流量统计__发送时间，格式为5位cron表达式
+**Send to** | Can be user/group/channel IDs, supports multiple, separated by commas
+**Time** | __Daily bandwidth statistics__ sending time, formatted as a 5-field cron expression
 
-chat_id 和 time 一行一个，例：
+chat_id and time, one per line, e.g.:
 `123123,321321
 0 23 * * *`
 """
@@ -328,7 +328,7 @@ chat_id 和 time 一行一个，例：
     await cq.message.edit(text=text, reply_markup=Ikm([return_button]))
 
 
-# 通知设置
+# Notification settings
 @Client.on_message(
     filters.text & step_filter("set_cronjob") & filters.private & is_admin
 )
@@ -346,7 +346,7 @@ async def cronjob_set_edit(_, message: Message):
         )
     await message.delete()
     await menu_msg.edit(
-        text=f"设置成功！\n-------\nchat_id：`{cf_cfg.chat_id}`"
-        f"\ntime：`{cf_cfg.time}`",
+        text=f"Settings updated successfully!\n-------\nchat_id: `{cf_cfg.chat_id}`"
+        f"\ntime: `{cf_cfg.time}`",
         reply_markup=Ikm([return_button]),
     )

@@ -11,10 +11,10 @@ class WorkerInfo(CloudflareAPIResponse):
     def __init__(self, duration, errors, requests, response_body_size, subrequests):
         """
         :param duration:
-        :param errors: 错误请求数
-        :param requests: 今天的请求总数 免费版最多10万次/天 北京时间早上8点重置
-        :param response_body_size: 已用流量
-        :param subrequests: 子请求数
+        :param errors: Number of error requests
+        :param requests: Total requests today (Free plan allows up to 100,000/day, resets at 8 AM Beijing time)
+        :param response_body_size: Used traffic
+        :param subrequests: Number of subrequests
         """
         self.duration = duration
         self.errors = errors

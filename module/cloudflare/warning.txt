@@ -1,1 +1,1 @@
-网站的下载节点流量已全部用完，早上8点自动恢复
+The download node traffic for the website has been completely used up. It will automatically recover at 8 AM.

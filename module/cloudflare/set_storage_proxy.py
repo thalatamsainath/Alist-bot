@@ -13,15 +13,15 @@ from tools.step_statu import step
 
 @Client.on_callback_query(filters.regex("^random_node$"))
 async def random_node_callback(_, cq: CallbackQuery):
-    await cq.message.edit("正在设置随机代理...")
+    await cq.message.edit("Setting random proxy...")
     if e := await set_random_node():
-        return await cq.message.edit(f"设置失败: {e}")
-    return await cq.message.edit("存储随机代理|完成!")
+        return await cq.message.edit(f"Failed to set: {e}")
+    return await cq.message.edit("Stored random proxy | Completed!")
 
 
 @Client.on_callback_query(filters.regex("^unified_node$"))
 async def unified_node_callback(_, cq: CallbackQuery):
-    await cq.message.edit("请发送节点地址, 需要加上协议\n例: `https://example.com`")
+    await cq.message.edit("Please send the node address, including the protocol\nExample: `https://example.com`")
     step.set_step(cq.from_user.id, "unified_node", True)
     step.insert(cq.from_user.id, msg=cq.message)
 
@@ -30,14 +30,14 @@ async def unified_node_callback(_, cq: CallbackQuery):
 async def set_unified_node(_, msg: Message):
     step.init(msg.from_user.id)
     m: Message = step.get(msg.from_user.id, "msg")
-    m = await m.reply("正在设置统一代理...")
+    m = await m.reply("Setting unified proxy...")
     if e := await set_random_node(msg.text):
-        return await msg.reply(f"设置失败: {e}")
-    await m.edit("存储统一代理|完成!")
+        return await msg.reply(f"Failed to set: {e}")
+    await m.edit("Stored unified proxy | Completed!")
 
 
 async def set_random_node(node: str | None = None):
-    """设置节点代理"""
+    """Set node proxy"""
     storage_list = await alist.storage_list()
     nodes = [f"https://{node.url}" for node in cf_cfg.nodes]
     for storage in storage_list.data:

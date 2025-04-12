@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 import yaml
 
-# 存储和检索与特定聊天相关联的数据
+# Store and retrieve data associated with specific chats
 chat_data = {}
 DOWNLOADS_PATH = Path("data/downloads")
 DOWNLOADS_PATH.mkdir(parents=True, exist_ok=True)
@@ -33,11 +33,11 @@ class BaseConfig:
                 result = result.get(k, default)
             else:
                 return default
-        self._key_map[keys[-1]] = key  # 保存属性名到配置路径的映射
+        self._key_map[keys[-1]] = key  # Save the mapping of attribute names to configuration paths
         return result
 
     def modify(self, key, value):
-        # 根据key和value实现修改逻辑
+        # Implement modification logic based on key and value
         keys = key.split(".")
         temp = self.config
         for k in keys[:-1]:

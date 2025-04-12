@@ -76,7 +76,7 @@ class AListAPI:
         scope: int = 0,
         password: str = "",
     ):
-        """搜索文件"""
+        """Search for files"""
         body = {
             "parent": parent,
             "keywords": keywords,
@@ -90,47 +90,47 @@ class AListAPI:
         )
 
     async def fs_get(self, path):
-        """获取下载信息"""
+        """Get download information"""
         return await self._request(
             "POST", "/api/fs/get", data_class=FileInfo, json={"path": path}
         )
 
     async def storage_get(self, storage_id):
-        """查询指定存储信息"""
+        """Query specific storage information"""
         url = f"/api/admin/storage/get?id={storage_id}"
         return await self._request("GET", url, data_class=StorageInfo)
 
     async def storage_create(self, body: StorageInfo | dict):
-        """新建存储"""
+        """Create new storage"""
         url = "/api/admin/storage/create"
         if isinstance(body, dict):
             body = StorageInfo.from_dict(body)
         return await self._request("POST", url, json=body.to_dict())
 
     async def storage_update(self, body: StorageInfo):
-        """更新存储"""
+        """Update storage"""
         url = "/api/admin/storage/update"
         if isinstance(body, dict):
             body = StorageInfo.from_dict(body)
         return await self._request("POST", url, json=body.to_dict())
 
     async def storage_list(self):
-        """获取存储列表"""
+        """Get storage list"""
         url = "/api/admin/storage/list"
         return await self._request("GET", url, data_class=StorageInfo)
 
     async def storage_delete(self, storage_id) -> AListAPIResponse:
-        """删除指定存储"""
+        """Delete specific storage"""
         url = f"/api/admin/storage/delete?id={str(storage_id)}"
         return await self._request("POST", url)
 
     async def storage_enable(self, storage_id) -> AListAPIResponse:
-        """开启存储"""
+        """Enable storage"""
         url = f"/api/admin/storage/enable?id={str(storage_id)}"
         return await self._request("POST", url)
 
     async def storage_disable(self, storage_id) -> AListAPIResponse:
-        """关闭存储"""
+        """Disable storage"""
         url = f"/api/admin/storage/disable?id={str(storage_id)}"
         return await self._request("POST", url)
 
@@ -141,7 +141,7 @@ class AListAPI:
         file_name,
         as_task: Literal["true", "false"] = "false",
     ):
-        """上传文件"""
+        """Upload file"""
         url = "/api/fs/put"
         header = {
             "UserAgent": useragent,
@@ -159,44 +159,44 @@ class AListAPI:
         )
 
     async def fs_list(self, path, per_page: int = 0):
-        """获取列表，强制刷新列表"""
+        """Get list, force refresh list"""
         url = "/api/fs/list"
         body = {"path": path, "page": 1, "per_page": per_page, "refresh": True}
         return await self._request("POST", url, json=body)
 
     async def driver_list(self):
-        """获取驱动列表"""
+        """Get driver list"""
         url = "/api/admin/driver/list"
         return await self._request("GET", url)
 
     async def setting_list(self):
-        """获取设置列表"""
+        """Get settings list"""
         url = "/api/admin/setting/list"
         return await self._request("GET", url, data_class=SettingInfo)
 
     async def user_list(self):
-        """获取用户列表"""
+        """Get user list"""
         url = "/api/admin/user/list"
         return await self._request("GET", url, data_class=UserInfo)
 
     async def meta_list(self):
-        """获取元信息列表"""
+        """Get metadata list"""
         url = "/api/admin/meta/list"
         return await self._request("GET", url, data_class=MetaInfo)
 
     async def setting_get(self, key):
-        """获取某项设置"""
+        """Get a specific setting"""
         url = "/api/admin/setting/get"
         params = {"key": key}
         return await self._request("GET", url, data_class=SettingInfo, params=params)
 
     async def get_offline_download_tools(self):
-        """获取离线下载工具"""
+        """Get offline download tools"""
         url = "/api/public/offline_download_tools"
         return await self._request("GET", url)
 
     async def add_offline_download(self, urls, tool, path, delete_policy):
-        """离线下载"""
+        """Offline download"""
         url = "/api/fs/add_offline_download"
         body = {
             "delete_policy": delete_policy,
@@ -207,23 +207,23 @@ class AListAPI:
         return await self._request("POST", url, json=body)
 
     async def get_offline_download_undone_task(self):
-        """获取离线下载未完成任务"""
+        """Get unfinished offline download tasks"""
         url = "/api/admin/task/offline_download/undone"
         return await self._request("GET", url)
 
     async def get_offline_download_done_task(self):
-        """获取离线下载已完成任务"""
+        """Get completed offline download tasks"""
         url = "/api/admin/task/offline_download/done"
         return await self._request("GET", url)
 
     async def clear_offline_download_done_task(self):
-        """清空离线下载已完成任务（包含成功/失败）"""
+        """Clear completed offline download tasks (including success/failure)"""
         url = "/api/admin/task/offline_download/clear_done"
         return await self._request("POST", url)
 
     @staticmethod
     def sign(path: str, expire_time: int = 30) -> str:
-        """计算签名"""
+        """Calculate signature"""
         expire_time_stamp = int(
             datetime.datetime.now().timestamp()
             + datetime.timedelta(minutes=expire_time).total_seconds()

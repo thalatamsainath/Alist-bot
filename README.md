@@ -2,159 +2,158 @@
 
 [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=alist-org&repo=alist)](https://github.com/alist-org/alist)
 
-**主要功能：**
+**Main Features:**
 
-- [x] 搜索
-    - [x] 文件基本信息
-    - [x] 自定义结果数量
-    - [x] 文件直链
-- [x] 存储
-    - [x] 开关存储
-    - [x] 删除存储
-    - [x] 复制存储
-    - [x] 新建存储
-    - [x] 自动排序
-    - [x] 批量新建存储
-- [x] Cloudflare节点管理
-    - [x] 节点监控
-    - [x] 通知
-        - [x] 节点状态
-        - [x] 每日流量统计
-    - [x] 自动管理存储
-    - [x] 自动切换节点
-    - [x] cf账号管理
-    - [x] 代理负载均衡
-    - [x] 存储随机节点
-    - [x] 存储统一节点
-- [x] Alist配置备份&定时备份
-- [x] Alist图床
-- [x] 随机推荐
-- [x] 离线下载
+- [x] Search
+    - [x] Basic file information
+    - [x] Custom result quantity
+    - [x] Direct file link
+- [x] Storage
+    - [x] Enable/Disable storage
+    - [x] Delete storage
+    - [x] Copy storage
+    - [x] Create new storage
+    - [x] Auto sorting
+    - [x] Batch create storage
+- [x] Cloudflare Node Management
+    - [x] Node monitoring
+    - [x] Notifications
+        - [x] Node status
+        - [x] Daily traffic statistics
+    - [x] Automatic storage management
+    - [x] Automatic node switching
+    - [x] Cloudflare account management
+    - [x] Proxy load balancing
+    - [x] Random storage node
+    - [x] Unified storage node
+- [x] Alist configuration backup & scheduled backup
+- [x] Alist image hosting
+- [x] Random recommendation
+- [x] Offline download
 
-### 功能预览&说明:
-
-<details>
-<summary><b>点击展开</b></summary>
-
+### Features Preview & Description:
 
 <details>
-<summary><b>搜索</b></summary>
+<summary><b>Click to Expand</b></summary>
 
-![搜索预览图](https://img.155155155.xyz/2023/12/1703834393546.png)
+
+<details>
+<summary><b>Search</b></summary>
+
+![Search Preview](https://img.155155155.xyz/2023/12/1703834393546.png)
 
 </details>
 
 <details>
-<summary><b>配置备份</b></summary>
+<summary><b>Configuration Backup</b></summary>
 
-可以回复消息来添加备注，可以重复修改
+You can reply to messages to add notes, and modify them repeatedly.
 
-![配置备份](https://img.155155155.xyz/2023/12/1703835568828.gif)
-
-</details>
-
-
-<details>
-<summary><b>存储管理菜单</b></summary>
-
-![管理存储](https://img.155155155.xyz/2023/12/1703835610320.png)
+![Configuration Backup](https://img.155155155.xyz/2023/12/1703835568828.gif)
 
 </details>
 
 
 <details>
-<summary><b>开关存储</b></summary>
+<summary><b>Storage Management Menu</b></summary>
 
-![管理存储](https://img.155155155.xyz/2023/12/1703835984793.png)
-
-</details>
-
-
-<details>
-<summary><b>复制存储</b></summary>
-
-自动复制存储为负载均衡，存储排序会自动加1   
-![复制存储](https://img.155155155.xyz/2023/12/1703836021621.png)
+![Manage Storage](https://img.155155155.xyz/2023/12/1703835610320.png)
 
 </details>
 
 
 <details>
-<summary><b>删除存储</b></summary>
+<summary><b>Enable/Disable Storage</b></summary>
 
-![复制存储](https://img.155155155.xyz/2023/12/1703836083261.png)
-
-</details>
-
-
-<details>
-<summary><b>新建&批量新建&默认配置</b></summary>
-
-<details>
-<summary><b> - 新建&批量新建</b></summary>
-
-支持添加所有 AList 支持的存储
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703836646184.png)
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703836713207.png)
-
-**添加单个**
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703836862502.png)
-
-**批量添加**
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703836915002.png)
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703836982303.png)
-
-![新建&批量新建](https://img.155155155.xyz/2023/12/1703837216466.png)
-
+![Manage Storage](https://img.155155155.xyz/2023/12/1703835984793.png)
 
 </details>
 
 
 <details>
-<summary><b> - 默认配置</b></summary>
+<summary><b>Copy Storage</b></summary>
 
-可以设置默认配置，新建存储会优先使用默认配置。所有参数都可以设置默认值
+Automatically copies storage for load balancing, and storage sorting will automatically increment by 1.  
+![Copy Storage](https://img.155155155.xyz/2023/12/1703836021621.png)
 
-比如设置了PikPak的`用户名`和`密码`，新建的时候就不需要输入了，只需要输入`挂载路径`和`分享ID`
+</details>
 
-![默认配置](https://img.155155155.xyz/2023/12/1703837264493.png)
+
+<details>
+<summary><b>Delete Storage</b></summary>
+
+![Delete Storage](https://img.155155155.xyz/2023/12/1703836083261.png)
+
+</details>
+
+
+<details>
+<summary><b>Create & Batch Create & Default Configuration</b></summary>
+
+<details>
+<summary><b> - Create & Batch Create</b></summary>
+
+Supports adding all storage types supported by AList.
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703836646184.png)
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703836713207.png)
+
+**Add Single**
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703836862502.png)
+
+**Batch Add**
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703836915002.png)
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703836982303.png)
+
+![Create & Batch Create](https://img.155155155.xyz/2023/12/1703837216466.png)
+
+
+</details>
+
+
+<details>
+<summary><b> - Default Configuration</b></summary>
+
+You can set default configurations, and new storage will prioritize using the default configuration. All parameters can have default values.
+
+For example, if you set the `username` and `password` for PikPak, you won't need to input them when creating new storage, only the `mount path` and `share ID`.
+
+![Default Configuration](https://img.155155155.xyz/2023/12/1703837264493.png)
 
 </details>
 
 </details>
 
 <details>
-<summary><b> 图床</b></summary>
+<summary><b> Image Hosting</b></summary>
 
-![i5mjHX.gif](https://img.155155155.xyz/2023/12/1703837391936.png)
-![i5mjHX.gif](https://img.155155155.xyz/2023/12/1703837424640.png)
+![Image Hosting](https://img.155155155.xyz/2023/12/1703837391936.png)
+![Image Hosting](https://img.155155155.xyz/2023/12/1703837424640.png)
 
 
 </details>
 
 <details>
-<summary><b> Cloudflare节点管理</b></summary>
+<summary><b> Cloudflare Node Management</b></summary>
 
-**节点状态监控**：每 60 秒检测一次节点状态，如果节点`掉线`或`故障`会发送通知  
-**每日流量统计**：每天定时发送当天使用的流量  
-**自动管理存储**：检测到节点掉线，会自动关闭存储，节点恢复后自动开启存储  
-**自动切换节点**：检测到节点掉线，会自动切换其他未使用的可用节点，每天早上8点自动恢复原来的节点  
-**节点负载均衡（推荐）**：用户下载时会自动重定向到可用下载节点
+**Node Status Monitoring**: Checks node status every 60 seconds. If a node goes `offline` or `fails`, a notification will be sent.  
+**Daily Traffic Statistics**: Sends daily traffic usage statistics at a scheduled time.  
+**Automatic Storage Management**: Automatically disables storage when a node goes offline and re-enables it when the node recovers.  
+**Automatic Node Switching**: Automatically switches to other available nodes when a node goes offline. Restores the original node at 8 AM daily.  
+**Node Load Balancing (Recommended)**: Redirects users to available download nodes automatically during downloads.
 
-如果`自动管理存储`和`自动切换节点`同时启用，那么当节点失效时会优先切换节点，如果节点全部不可用，才会关闭存储
+If both `Automatic Storage Management` and `Automatic Node Switching` are enabled, the system will prioritize switching nodes when a node fails. If all nodes are unavailable, storage will be disabled.
 
-注：添加cf账号默认使用第一个域名的第一个Workers路由  
-**如果你cf账号里面有多个域名，域名下面有多个Workers路由，建议手动添加账号**
+Note: Adding a Cloudflare account defaults to using the first domain's first Workers route.
 
 <details>
-<summary><b> 手动添加账号</b></summary>
+<summary><b> Manually Add Account</b></summary>
 
-打开`cloudflare_cfg.yaml`配置文件，将账号添加到`node`列表，格式如下：
+Open the `cloudflare_cfg.yaml` configuration file and add the account to the `node` list in the following format:
 
 ``` yaml
 node:
@@ -170,50 +169,50 @@ node:
   zone_id: 
 ```
 
-**account_id：`cf主页` --> `域名` --> `右下角` --> `帐户 ID`**  
-**zone_id: `cf主页` --> `域名` --> `右下角` --> `区域 ID`**
+**account_id**: `CF Homepage` --> `Domain` --> `Bottom Right` --> `Account ID`  
+**zone_id**: `CF Homepage` --> `Domain` --> `Bottom Right` --> `Zone ID`
 
-**email：cf账号的邮箱**  
-**global_api_key：`cf主页` --> `右上角头像` --> `我的个人资料` --> `API 令牌` --> `Global API Key`**  
-**url：填workers路由里面添加的，用来做代理的域名就行，只填域名，不要加https和后面的/*，例：a.ziling.cf**
+**email**: Email of the CF account  
+**global_api_key**: `CF Homepage` --> `Top Right Avatar` --> `My Profile` --> `API Tokens` --> `Global API Key`  
+**url**: Fill in the domain used for proxying in the Workers route. Only fill in the domain, do not add https or /*, e.g., a.ziling.cf.
 
 </details>
 
-![enter description here](https://img.155155155.xyz/2023/12/1703837685120.png)
+![Cloudflare Node Management](https://img.155155155.xyz/2023/12/1703837685120.png)
 
-![enter description here](https://img.155155155.xyz/2023/12/1703837748426.png)
+![Cloudflare Node Management](https://img.155155155.xyz/2023/12/1703837748426.png)
 
 </details>
 
 <details>
-<summary><b> 随机推荐</b></summary>
+<summary><b> Random Recommendation</b></summary>
 
-该功能会随机发送一个资源，并支持自定义路径和关键词。
+This feature randomly sends a resource and supports custom paths and keywords.
 
-**支持的命令**  
+**Supported Commands**  
 **/sr**  
-随机推荐设置菜单  
+Random recommendation settings menu  
 **/roll**  
-使用/roll命令，系统将从所有路径中随机选择一个资源并发送。  
-**/roll 关键词**  
-使用/roll命令后加上一个关键词，系统将从对应的路径中随机选择一个资源并发送。
+Use the /roll command to randomly select a resource from all paths and send it.  
+**/roll keyword**  
+Use the /roll command followed by a keyword to randomly select a resource from the corresponding path and send it.
 
-您可以自定义路径和关键词，以便根据需求发送不同的资源。每个关键词可以对应多个路径，如下：
+You can customize paths and keywords to send different resources based on your needs. Each keyword can correspond to multiple paths, as shown below:
 
 ``` yaml
 path:
-  关键词: 路径 # 路径前面需要加上斜杠
-  act: /,【ACT-动作游戏】
-  adv: /,【ADV-冒险游戏】
-  rpg: /,【RPG-角色扮演游戏】
-  slg: /,【SLG-策略游戏】
+  keyword: path # Add a slash before the path
+  act: /,【ACT-Action Games】
+  adv: /,【ADV-Adventure Games】
+  rpg: /,【RPG-Role Playing Games】
+  slg: /,【SLG-Strategy Games】
   gd:
-    - /%60【归%20档】/【KRKR合集】/1
-    - /%60【归%20档】/【KRKR合集】/2
-    - /%60【归%20档】/【ONS合集】
+    - /%60【Archive】/【KRKR Collection】/1
+    - /%60【Archive】/【KRKR Collection】/2
+    - /%60【Archive】/【ONS Collection】
 ```
 
-![Vt1xn3.png](https://img.155155155.xyz/2023/12/1703837814405.png)
+![Random Recommendation](https://img.155155155.xyz/2023/12/1703837814405.png)
 
 
 </details>
@@ -222,28 +221,28 @@ path:
 
 ---
 
-## 安装
+## Installation
 
-### 一、Docker 安装
+### 1. Docker Installation
 
-**1.新建 bot 配置文件目录**
+**1. Create a bot configuration file directory**
 
 ```shell
 mkdir -p /root/alist-bot
 ```
 
-**2.编写 `config.yaml` 放至你创建的路径下 `/root/alist-bot`**
+**2. Write `config.yaml` and place it in the path you created `/root/alist-bot`**
 
 ```yaml
 alist:
-  alist_host: http://127.0.0.1:5244 # alist ip:port或alist域名，一般填域名即可
-  alist_web: http://127.0.0.1:5244 # 你的alist域名
+  alist_host: http://127.0.0.1:5244 # alist ip:port or alist domain, usually just fill in the domain
+  alist_web: http://127.0.0.1:5244 # your alist domain
   alist_token: "" # alist token
 user:
-  admin:  # 管理员用户id，可通过 https://t.me/getletbot 获取id
-  member: [ ]  # 允许使用bot的 用户、群组、频道（群组和频道id需要加上-100）可通过 https://t.me/getletbot 获取id。 留空为所有人可用
-  bot_token:  # bot的api token，从 @BotFather 获取
-  api_id:  # api_id、api_hash在 https://my.telegram.org/apps 获取
+  admin:  # Administrator user ID, can be obtained via https://t.me/getletbot
+  member: [ ]  # Users, groups, and channels allowed to use the bot (group and channel IDs need to add -100). Can be obtained via https://t.me/getletbot. Leave blank to allow everyone to use.
+  bot_token:  # Bot API token, obtained from @BotFather
+  api_id:  # api_id and api_hash can be obtained from https://my.telegram.org/apps
   api_hash:
 proxy:
   scheme: http
@@ -252,7 +251,7 @@ proxy:
 backup_time: '0'
 ```
 
-**3.拉取镜像运行即可**
+**3. Pull the image and run**
 
 ```shell
 docker run -d \
@@ -263,32 +262,32 @@ docker run -d \
   ghcr.io/akashicoin/alist-bot:main
 ```
 
-### 二、正常安装
+### 2. Normal Installation
 
-**1.安装 python3-pip**
+**1. Install python3-pip**
 
 ```
 apt install python3-pip
 ```
 
-**2.将项目克隆到本地**
+**2. Clone the project locally**
 
 ``` 
 git clone https://github.com/AkashiCoin/Alist-bot.git && cd Alist-bot && pip3 install -r requirements.txt
 ```
 
-**3.修改 config.yaml 里的配置信息**
+**3. Modify the configuration information in config.yaml**
 
 ```yaml
 alist:
-  alist_host: http://127.0.0.1:5244 # alist ip:port或alist域名，一般填域名即可
-  alist_web: http://127.0.0.1:5244 # 你的alist域名
+  alist_host: http://127.0.0.1:5244 # alist ip:port or alist domain, usually just fill in the domain
+  alist_web: http://127.0.0.1:5244 # your alist domain
   alist_token: "" # alist token
 user:
-  admin:  # 管理员用户id，可通过 https://t.me/getletbot 获取id
-  member: [ ]  # 允许使用bot的 用户、群组、频道（群组和频道id需要加上-100）可通过 https://t.me/getletbot 获取id。 留空为所有人可用
-  bot_token:  # bot的api token，从 @BotFather 获取
-  api_id:  # api_id、api_hash在 https://my.telegram.org/apps 获取
+  admin:  # Administrator user ID, can be obtained via https://t.me/getletbot
+  member: [ ]  # Users, groups, and channels allowed to use the bot (group and channel IDs need to add -100). Can be obtained via https://t.me/getletbot. Leave blank to allow everyone to use.
+  bot_token:  # Bot API token, obtained from @BotFather
+  api_id:  # api_id and api_hash can be obtained from https://my.telegram.org/apps
   api_hash:
 proxy:
   scheme: http
@@ -297,17 +296,17 @@ proxy:
 backup_time: '0'
 ```
 
-**4.启动bot**
+**4. Start the bot**
 
-**前台启动bot**
+**Start the bot in the foreground**
 
 ``` 
 python3 bot.py
 ```
 
-**设置开机自启**
+**Set up auto-start on boot**
 
-以下是一整条命令，一起复制到SSH客户端运行
+The following is a single command. Copy it all at once into the SSH client to run.
 
 ``` 
 cat > /etc/systemd/system/alist-bot.service <<EOF
@@ -327,40 +326,40 @@ WantedBy=multi-user.target
 EOF
 ```
 
-然后，执行 `systemctl daemon-reload` 重载配置，现在你可以使用这些命令来管理程序：
+Then, execute `systemctl daemon-reload` to reload the configuration. Now you can use these commands to manage the program:
 
-启动：`systemctl start alist-bot`  
-停止：`systemctl stop alist-bot`    
-开启开机自启：`systemctl enable alist-bot`  
-关闭开机自启：`systemctl disable alist-bot`  
-重启：`systemctl restart alist-bot`  
-状态：`systemctl status alist-bot`
+Start: `systemctl start alist-bot`  
+Stop: `systemctl stop alist-bot`    
+Enable auto-start on boot: `systemctl enable alist-bot`  
+Disable auto-start on boot: `systemctl disable alist-bot`  
+Restart: `systemctl restart alist-bot`  
+Status: `systemctl status alist-bot`
 
-## 开始使用
+## Getting Started
 
-私聊或群组里发送指令  
-第一次使用可以发送`/menu`自动设置Bot菜单
+Send commands in private chat or group chat.  
+For first-time use, send `/menu` to automatically set up the bot menu.
 
-**指令列表：**
+**Command List:**
 
 ```
-/start 开始
-/s + 文件名 进行搜索
-/roll 随机推荐
-/vb 查看下载节点信息
+/start Start
+/s + filename Search
+/roll Random recommendation
+/vb View download node information
 
-管理员命令：
-/sl - 设置搜索结果数量
-/zl - 开启/关闭直链
-/st - 存储管理 
-/sf - Cloudflare节点管理
-/cf - 查看当前配置
-/bc - 备份Alist配置
-/sbt - 设置定时备份
-/sr - 随机推荐设置
-/od - 离线下载
-/dt - 设置搜索结果定时删除
-/help - 查看帮助
+Admin Commands:
+/sl - Set search result quantity
+/zl - Enable/Disable direct link
+/st - Storage management 
+/sf - Cloudflare node management
+/cf - View current configuration
+/bc - Backup Alist configuration
+/sbt - Set scheduled backup
+/sr - Random recommendation settings
+/od - Offline download
+/dt - Set search result auto-delete timer
+/help - View help
 ```
 
 
